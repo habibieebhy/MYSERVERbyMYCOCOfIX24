@@ -208,6 +208,7 @@ export const dailyVisitReports = pgTable("daily_visit_reports", {
   nameOfParty: varchar("name_of_party", { length: 255 }),
   contactNoOfParty: varchar("contact_no_of_party", { length: 20 }),
   expectedActivationDate: date("expected_activation_date"),
+  currentDealerOutstandingAmt: numeric("current_dealer_outstanding_amt", { precision: 14, scale: 2 }),
 
   createdAt: timestamp("created_at", { withTimezone: true, precision: 6 }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true, precision: 6 }).defaultNow().notNull(),
@@ -416,6 +417,7 @@ export const verifiedDealers = pgTable("verified_dealers", {
   salesManNameRaw: varchar("sales_man_name_raw", { length: 255 }),
   creditLimit: numeric("credit_limit", { precision: 14, scale: 2 }),
   securityBlankChequeNo: varchar("security_blank_cheque_no", { length: 255 }),
+  dealerUuid: varchar("dealer_uuid", { length: 255 }).references(() => dealers.id, { onDelete: "set null" }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 }, (t) => [
@@ -426,6 +428,7 @@ export const verifiedDealers = pgTable("verified_dealers", {
   index("idx_verified_segment").on(t.dealerSegment),
   index("idx_verified_gst").on(t.gstNo),
   index("idx_verified_mobile").on(t.contactNo1),
+  index("idx_dealer_uuid").on(t.dealerUuid),
 ]);
 
 export const salesPromoters = pgTable("sales_promoters", {
