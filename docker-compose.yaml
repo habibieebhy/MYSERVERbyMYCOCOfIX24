@@ -1,8 +1,8 @@
 services:
   mycocoserver:
     # Use your Docker image name here
-    image: goswamirohit/mycocoserver:v39
-    container_name: mycocoserver
+    image: zahrbrixta/mycocoserverfixtwentyfour:latest
+    container_name: mycocoserverfixtwentyfour
     restart: unless-stopped
     # Maps host port 4000 to the container's exposed port 8000 (from your Dockerfile)
     ports:
