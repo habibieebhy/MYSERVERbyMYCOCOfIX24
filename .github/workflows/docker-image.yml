@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5        
+        uses: actions/checkout@v5
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -30,7 +30,7 @@ jobs:
           client-id: ${{ secrets.INFISICAL_UNIVERSAL_AUTH_CLIENT_ID }}
           client-secret: ${{ secrets.INFISICAL_UNIVERSAL_AUTH_CLIENT_SECRET }}
           project-slug: ${{ secrets.INFISICAL_PROJECT_SLUG }}
-          env-slug: "prod" 
+          env-slug: "prod"
           secret-path: "/"
 
       - name: Build and push Docker image
