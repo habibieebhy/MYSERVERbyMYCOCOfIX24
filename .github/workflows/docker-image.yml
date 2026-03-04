@@ -39,5 +39,4 @@ jobs:
           context: .
           push: true
           tags: |
-            zahrbrixta/mycocoserverfixtwentyfour:latest
-            zahrbrixta/mycocoserverfixtwentyfour:${{ github.sha }}
+            zahrbrixta/mycocoserverfixtwentyfour:mark1
