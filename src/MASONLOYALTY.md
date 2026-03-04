@@ -15,6 +15,12 @@ This phase establishes the Mason's identity and eligibility for the scheme, enfo
 | **3. KYC Submission** | `POST /api/kyc-submissions` | `kycSubmissions`, `masonPcSide` | **Atomic Transaction:** Inserts the detailed submission record. Crucially, it updates the primary `masonPcSide.kycStatus` to **'pending'**, gating future earning and redemption access until approval. |
 | **4. TSO KYC Approval** | `PATCH /api/kyc-submissions/:id` | `kycSubmissions`, `masonPcSide` | TSO action. **Atomic Transaction:** Updates the specific submission record's status. The core logic ensures the main `masonPcSide.kycStatus` is updated to **'approved'** or **'rejected'** to unlock the full application features. |
 
+-----
+
+-----
+
+## II. Earning Points: The TSO Approval Loop (The Core Logic)
+
 The heart of the program is the double-verification system: points are calculated on submission but only credited upon TSO approval.
 
 | Flow Step & User Action | Backend Route (Method) | Tables Involved | Key Backend Logic & Point Flow |
