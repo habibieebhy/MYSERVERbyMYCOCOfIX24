@@ -77,6 +77,7 @@ export const users = pgTable("users", {
   index("idx_user_company_id").on(t.companyId),
   index("idx_workos_user_id").on(t.workosUserId),
   index("idx_user_device_id").on(t.deviceId),
+  index("idx_users_reports_to_id").on(t.reportsToId),
 ]);
 
 /* ========================= notifications ========================= */

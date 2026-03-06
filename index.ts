@@ -111,10 +111,14 @@ import setupRewardsRedemptionPatchRoute from './src/routes/updateRoutes/rewardsR
 import setupBagLiftsPatchRoute from './src/routes/updateRoutes/bagsLift';
 import setupTechnicalSitesUpdateRoutes from './src/routes/updateRoutes/technicalSites';
 import setupLogisticsIOUpdateRoutes from './src/routes/updateRoutes/logisticsIO';
+import setupLeaveUpdateRoute from './src/routes/updateRoutes/salesmanLeaves';
 
 // --- Import GEO TRACKING route setups ---
 import setupGeoTrackingRoutes from './src/routes/geoTrackingRoutes/geoTracking';
 import setupJourneyOpsRoutes from './src/routes/geoTrackingRoutes/journeyOps';
+
+// ----- TeamView Routes -----
+import setupTeamViewRoutes from './src/routes/teamView/getView';
 
 // --- TelegramBot + AI Bot setups ---
 import setupAiService from './src/bots/aiService';
@@ -309,6 +313,7 @@ setupDailyVisitReportsPatchRoutes(app);
 setupTechnicalVisitReportsPatchRoutes(app);
 setupTsoMeetingsPatchRoutes(app);
 setupSalesOrdersPatchRoutes(app);
+setupLeaveUpdateRoute(app);
 
 // mason pc side
 setupMasonPcSidePatchRoutes(app);
@@ -330,6 +335,9 @@ setupLogisticsIOUpdateRoutes(app);
 // ---------- GEO TRACKING SETUP--------
 setupGeoTrackingRoutes(app);
 setupJourneyOpsRoutes(app);
+
+// ------- Team View --------
+setupTeamViewRoutes(app);
 
 //------------ CLOUDFARE ----------------
 setupR2Upload(app);
