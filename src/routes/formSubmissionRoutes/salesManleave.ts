@@ -7,20 +7,6 @@ import { salesmanLeaveApplications, insertSalesmanLeaveApplicationSchema } from 
 import { z } from 'zod';
 import { randomUUID } from 'crypto';
 
-// Manual Zod schema EXACTLY matching the table schema
-// const salesmanLeaveApplicationSchema = z.object({
-//   userId: z.number().int().positive(),
-//   leaveType: z.string().max(100),
-//   startDate: z.string().or(z.date()),
-//   endDate: z.string().or(z.date()),
-//   reason: z.string().max(500),
-//   status: z.string().max(50),
-//   adminRemarks: z.string().max(500).optional().nullable().or(z.literal("")),
-// }).transform((data) => ({
-//   ...data,
-//   adminRemarks: data.adminRemarks === "" ? null : data.adminRemarks,
-// }));
-
 function createAutoCRUD(app: Express, config: {
   endpoint: string,
   table: any,
