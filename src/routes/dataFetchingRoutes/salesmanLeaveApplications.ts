@@ -20,7 +20,7 @@ function createAutoCRUD(app: Express, config: {
   // GET ALL - with optional filtering and date range
   app.get(`/api/${endpoint}`, async (req: Request, res: Response) => {
     try {
-      const { startDate, endDate, limit = '50', userId, leaveType, status, ...filters } = req.query;
+      const { startDate, endDate, limit = '50', userId, leaveType, status, appRole, ...filters } = req.query;
 
       let whereCondition: any = undefined;
 
@@ -51,6 +51,13 @@ function createAutoCRUD(app: Express, config: {
         whereCondition = whereCondition 
           ? and(whereCondition, eq(table.status, status as string))
           : eq(table.status, status as string);
+      }
+
+      // Filter by appRole explicitly
+      if (appRole) {
+        whereCondition = whereCondition 
+          ? and(whereCondition, eq(table.appRole, appRole as string))
+          : eq(table.appRole, appRole as string);
       }
 
       // Additional filters
@@ -94,7 +101,7 @@ function createAutoCRUD(app: Express, config: {
   app.get(`/api/${endpoint}/user/:userId`, async (req: Request, res: Response) => {
     try {
       const { userId } = req.params;
-      const { startDate, endDate, limit = '50', status, leaveType } = req.query;
+      const { startDate, endDate, limit = '50', status, leaveType, appRole, } = req.query;
 
       let whereCondition: (SQL|undefined) = eq(table.userId, parseInt(userId));
 
@@ -112,6 +119,9 @@ function createAutoCRUD(app: Express, config: {
       }
       if (leaveType) {
         whereCondition = and(whereCondition, eq(table.leaveType, leaveType as string));
+      }
+      if (appRole) {
+        whereCondition = and(whereCondition, eq(table.appRole, appRole as string));
       }
 
       const orderField = table[dateField as any] || table.createdAt;
@@ -159,7 +169,7 @@ function createAutoCRUD(app: Express, config: {
   app.get(`/api/${endpoint}/status/:status`, async (req: Request, res: Response) => {
     try {
       const { status } = req.params;
-      const { startDate, endDate, limit = '50', userId, leaveType } = req.query;
+      const { startDate, endDate, limit = '50', userId, leaveType, appRole } = req.query;
 
       let whereCondition: (SQL|undefined) = eq(table.status, status);
 
@@ -177,6 +187,9 @@ function createAutoCRUD(app: Express, config: {
       }
       if (leaveType) {
         whereCondition = and(whereCondition, eq(table.leaveType, leaveType as string));
+      }
+      if (appRole) {
+        whereCondition = and(whereCondition, eq(table.appRole, appRole as string));
       }
 
       const orderField = table[dateField as any] || table.createdAt;

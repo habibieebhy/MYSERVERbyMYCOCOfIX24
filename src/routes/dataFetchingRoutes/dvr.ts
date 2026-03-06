@@ -1,11 +1,10 @@
 // server/src/routes/dataFetchingRoutes/dvr.ts
-// --- UPDATED to use dealerId and subDealerId ---
+// --- UPDATED to use dealerId and subDealerId across ALL routes ---
 
 import { Request, Response, Express } from 'express';
 import { db } from '../../db/db';
-import { dailyVisitReports } from '../../db/schema';
-import { z } from 'zod';
-import { and, asc, desc, eq, ilike, sql, gte, lte, SQL } from 'drizzle-orm';
+import { dailyVisitReports, dealers } from '../../db/schema';
+import { and, asc, desc, eq, ilike, sql, gte, lte, SQL, getTableColumns, aliasedTable } from 'drizzle-orm';
 
 type TableLike = typeof dailyVisitReports;
 
@@ -55,49 +54,41 @@ function createAutoCRUD(app: Express, config: {
     return direction === 'asc' ? asc(column) : desc(column);
   };
 
-  // --- buildWhere UPDATED ---
   const buildWhere = (q: any) => {
     const conds: (SQL | undefined)[] = [];
 
-    // --- ✅ FIX: Filter by new IDs ---
     if (q.dealerId) {
       conds.push(eq(table.dealerId, String(q.dealerId)));
     }
     if (q.subDealerId) {
       conds.push(eq(table.subDealerId, String(q.subDealerId)));
     }
-    // --- END FIX ---
     
-    // date range
     const startDate = q.startDate as string | undefined;
     const endDate = q.endDate as string | undefined;
     if (startDate && endDate) {
-      // NOTE: gte/lte on a 'date' column works fine with YYYY-MM-DD strings
       conds.push(and(
         gte(table[dateField], startDate),
         lte(table[dateField], endDate)
       ));
     }
 
-    // basic filters
     const uid = numberish(q.userId);
     if (uid !== undefined) conds.push(eq(table.userId, uid));
     if (q.dealerType) conds.push(eq(table.dealerType, String(q.dealerType)));
     if (q.visitType) conds.push(eq(table.visitType, String(q.visitType)));
     if (q.pjpId) conds.push(eq(table.pjpId, String(q.pjpId)));
 
-    // search (removed dealerName/subDealerName)
     if (q.search) {
       const s = `%${String(q.search).trim()}%`;
       conds.push(
         sql`(${ilike(table.location, s)} 
            OR ${ilike(table.contactPerson, s)}
-           OR ${ilike(table.feedbacks, s)})
-           OR ${ilike(table.nameOfParty, s)})`
+           OR ${ilike(table.feedbacks, s)}
+           OR ${ilike(table.nameOfParty, s)})` // Fixed syntax error here
       );
     }
 
-    // brandSelling filters (this logic is unchanged)
     const brands = extractBrands(q);
     if (brands.length) {
       const arrLiteral = toPgArrayLiteral(brands);
@@ -114,6 +105,19 @@ function createAutoCRUD(app: Express, config: {
     return finalConds.length === 1 ? finalConds[0] : and(...finalConds);
   };
 
+  // 🚀 HELPER TO AVOID DUPLICATING THE JOIN CODE
+  const getBaseQuery = () => {
+    const subDealersTable = aliasedTable(dealers, 'subDealers');
+    return db.select({
+      ...getTableColumns(table),
+      dealerName: dealers.name,
+      subDealerName: subDealersTable.name,
+    })
+    .from(table)
+    .leftJoin(dealers, eq(table.dealerId, dealers.id))
+    .leftJoin(subDealersTable, eq(table.subDealerId, subDealersTable.id));
+  };
+
   // ===== GET ALL =====
   app.get(`/api/${endpoint}`, async (req: Request, res: Response) => {
     try {
@@ -125,13 +129,10 @@ function createAutoCRUD(app: Express, config: {
       const whereCondition = buildWhere(filters);
       const orderExpr = buildSort(String(sortBy), String(sortDir));
 
-      // --- ✅ FIX: Correct query build order ---
-      let q = db.select().from(table).$dynamic();
-      if (whereCondition) {
-        q = q.where(whereCondition);
-      }
+      let q = getBaseQuery().$dynamic(); // 🚀 Using the join helper
+      if (whereCondition) q = q.where(whereCondition);
+
       const data = await q.orderBy(orderExpr).limit(lmt).offset(offset);
-      // --- END FIX ---
 
       res.json({ success: true, page: pg, limit: lmt, count: data.length, data });
     } catch (error) {
@@ -155,13 +156,10 @@ function createAutoCRUD(app: Express, config: {
 
       const orderExpr = buildSort(String(sortBy), String(sortDir));
 
-      // --- ✅ FIX: Correct query build order ---
-      let q = db.select().from(table).$dynamic();
-      if (whereCond) {
-        q = q.where(whereCond);
-      }
+      let q = getBaseQuery().$dynamic(); // Using the join helper
+      if (whereCond) q = q.where(whereCond);
+
       const data = await q.orderBy(orderExpr).limit(lmt).offset(offset);
-      // --- END FIX ---
 
       res.json({ success: true, page: pg, limit: lmt, count: data.length, data });
     } catch (error) {
@@ -174,7 +172,7 @@ function createAutoCRUD(app: Express, config: {
   app.get(`/api/${endpoint}/:id`, async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-      const [record] = await db.select().from(table).where(eq(table.id, id)).limit(1);
+      const [record] = await getBaseQuery().where(eq(table.id, id)).limit(1); // 🚀 Using the join helper
       if (!record) return res.status(404).json({ success: false, error: `${tableName} not found` });
       res.json({ success: true, data: record });
     } catch (error) {
@@ -198,13 +196,10 @@ function createAutoCRUD(app: Express, config: {
 
       const orderExpr = buildSort(String(sortBy), String(sortDir));
 
-      // --- ✅ FIX: Correct query build order ---
-      let q = db.select().from(table).$dynamic();
-      if (whereCond) {
-        q = q.where(whereCond);
-      }
+      let q = getBaseQuery().$dynamic(); // 🚀 Using the join helper
+      if (whereCond) q = q.where(whereCond);
+
       const data = await q.orderBy(orderExpr).limit(lmt).offset(offset);
-      // --- END FIX ---
 
       res.json({ success: true, page: pg, limit: lmt, count: data.length, data });
     } catch (error) {
@@ -228,13 +223,10 @@ function createAutoCRUD(app: Express, config: {
 
       const orderExpr = buildSort(String(sortBy), String(sortDir));
 
-      // --- ✅ FIX: Correct query build order ---
-      let q = db.select().from(table).$dynamic();
-      if (whereCond) {
-        q = q.where(whereCond);
-      }
+      let q = getBaseQuery().$dynamic(); // 🚀 Using the join helper
+      if (whereCond) q = q.where(whereCond);
+
       const data = await q.orderBy(orderExpr).limit(lmt).offset(offset);
-      // --- END FIX ---
 
       res.json({ success: true, page: pg, limit: lmt, count: data.length, data });
     } catch (error) {

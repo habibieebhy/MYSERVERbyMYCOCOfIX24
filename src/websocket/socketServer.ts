@@ -18,6 +18,7 @@ interface IncomingOp {
   userId: number;
   type: 'START' | 'MOVE' | 'STOP';
   payload: any; // Contains lat, lng, speed, etc.
+  appRole?: string;
   createdAt: string;
 }
 
@@ -31,7 +32,6 @@ export function attachWebSocket(server: Server) {
   wss.on('connection', async (ws: WebSocket, req) => {
     console.log('🔌 New Client Connected');
 
-    // ✅ FIX: Send immediate confirmation so Flutter Client knows we are ready
     ws.send(JSON.stringify({ type: 'CONNECTED', message: 'Server Response: OK' }));
 
     ws.on('message', async (data) => {
@@ -89,6 +89,7 @@ async function handleSyncOps(ws: WebSocket, ops: IncomingOp[]) {
           userId: op.userId,
           type: op.type,
           payload: op.payload,
+          appRole: op.appRole,
           createdAt: new Date(op.createdAt),
         }).returning({ serverSeq: journeyOps.serverSeq });
 
@@ -110,6 +111,7 @@ async function handleSyncOps(ws: WebSocket, ops: IncomingOp[]) {
             destLat: destLat ? destLat.toString() : null,
             destLng: destLng ? destLng.toString() : null,
             isSynced: true,
+            appRole: op.appRole,
             updatedAt: new Date(),
           });
 

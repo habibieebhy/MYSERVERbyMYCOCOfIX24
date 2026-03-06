@@ -140,8 +140,8 @@ import setupProjectionVsActualRoutes from './src/routes/dataFetchingRoutes/proje
 //---------------------------------------------
 //----------------MainMasterEMAILWORKER--------------------
 
-const emailRouter = new MasterEmailWorker();
-emailRouter.Start();
+// const emailRouter = new MasterEmailWorker();
+// emailRouter.Start();
 
 //----------------MainMasterEMAILWORKER--------------------
 //---------------------------------------------

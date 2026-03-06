@@ -21,6 +21,7 @@ const createJourneySchema = z.object({
   destLng: z.string().optional(),
   status: z.string().default('ACTIVE'),
   batteryStart: z.number().optional(),
+  appRole: z.string().optional(),
 });
 
 const createBreadcrumbSchema = z.object({

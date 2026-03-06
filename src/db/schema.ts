@@ -467,7 +467,7 @@ export const emailReports = pgTable("email_reports", {
 export const salesmanAttendance = pgTable("salesman_attendance", {
   id: varchar("id", { length: 255 }).primaryKey().$defaultFn(() => crypto.randomUUID()),
   userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  role: varchar("role", { length: 50 }).default('SALES').notNull(),
+  role: varchar("role", { length: 50 }).notNull(),
   attendanceDate: date("attendance_date").notNull(),
   locationName: varchar("location_name", { length: 500 }).notNull(),
   inTimeTimestamp: timestamp("in_time_timestamp", { withTimezone: true, precision: 6 }).notNull(),
@@ -505,6 +505,7 @@ export const salesmanLeaveApplications = pgTable("salesman_leave_applications", 
   reason: varchar("reason", { length: 500 }).notNull(),
   status: varchar("status", { length: 50 }).notNull(), // "Pending" | "Approved" | "Rejected"
   adminRemarks: varchar("admin_remarks", { length: 500 }),
+  appRole: varchar("app_role", { length: 50 }),
   createdAt: timestamp("created_at", { withTimezone: true, precision: 6 }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true, precision: 6 }).defaultNow().notNull(),
 }, (t) => [
@@ -579,6 +580,7 @@ export const journeyOps = pgTable("journey_ops", {
   userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade", onUpdate: "cascade" }),
   type: text("type").notNull(),
   payload: jsonb("payload").notNull(),
+  appRole: varchar("app_role", { length: 50 }),
 
   createdAt: timestamp("created_at", { withTimezone: true, precision: 6 }).defaultNow().notNull(),
 }, (t) => [
@@ -604,6 +606,7 @@ export const journeys = pgTable("journeys", {
   startTime: timestamp("start_time", { withTimezone: true, precision: 6 }).defaultNow().notNull(),
   endTime: timestamp("end_time", { withTimezone: true, precision: 6 }),
   totalDistance: numeric("total_distance", { precision: 10, scale: 3 }).default('0'),
+  appRole: varchar("app_role", { length: 50 }),
 
   // unused field - but keep it
   isSynced: boolean("is_synced").default(false),

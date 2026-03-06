@@ -13,6 +13,7 @@ const JourneyOpSchema = z.object({
   payload: z.any(),
   localSeq: z.number().int(),
   createdAt: z.string().datetime(),
+  appRole: z.string().optional(),
 });
 
 const SyncSchema = z.object({
@@ -67,6 +68,7 @@ export default function setupJourneyOpsRoutes(app: Express) {
             userId,
             type: op.type,
             payload: op.payload,
+            appRole: op.appRole,
             createdAt: new Date(op.createdAt),
           })
           .returning();
