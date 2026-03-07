@@ -5,7 +5,7 @@ import path from 'path';
 import dotenv from 'dotenv';
 dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 // --- Import ALL your API route setups ---
-import setupMasonStatsRoute from './src/routes/dataFetchingRoutes/masonstatscheck'
+//import setupMasonStatsRoute from './src/routes/dataFetchingRoutes/masonstatscheck'
 import setupAuthRoutes from './src/routes/auth'; 
 import setupUsersRoutes from './src/routes/users'; 
 import setupCompaniesRoutes from './src/routes/companies'; 
@@ -24,19 +24,19 @@ import setupDailyVisitReportsRoutes from './src/routes/dataFetchingRoutes/dvr';
 import setupSalesmanAttendanceRoutes from './src/routes/dataFetchingRoutes/salesmanAttendance';
 import setupTechnicalVisitReportsRoutes from './src/routes/dataFetchingRoutes/tvr';
 import setupTsoMeetingsGetRoutes from './src/routes/dataFetchingRoutes/tsoMeetings';
-import setupMasonsOnMeetingsGetRoutes from './src/routes/dataFetchingRoutes/masonOnMeeting';
-import setupMasonsOnSchemeGetRoutes from './src/routes/dataFetchingRoutes/masonOnScheme';
-import setupMasonsPcSideRoutes from './src/routes/dataFetchingRoutes/masonpcSide';
-import setupSchemesOffersRoutes from './src/routes/dataFetchingRoutes/schemesOffers';
-import setupBagLiftsGetRoutes from './src/routes/dataFetchingRoutes/bagsLift';
-import setupPointsLedgerGetRoutes from './src/routes/dataFetchingRoutes/pointsLedger';
-import setupRewardCategoriesGetRoutes from './src/routes/dataFetchingRoutes/rewardCategories';
-import setupRewardsGetRoutes from './src/routes/dataFetchingRoutes/rewards';
-import setupRewardsRedemptionGetRoutes from './src/routes/dataFetchingRoutes/rewardsRedemption';
-import setupKycSubmissionsRoutes from './src/routes/dataFetchingRoutes/kycSubmissions';
+// import setupMasonsOnMeetingsGetRoutes from './src/routes/dataFetchingRoutes/masonOnMeeting';
+// import setupMasonsOnSchemeGetRoutes from './src/routes/dataFetchingRoutes/masonOnScheme';
+// import setupMasonsPcSideRoutes from './src/routes/dataFetchingRoutes/masonpcSide';
+// import setupSchemesOffersRoutes from './src/routes/dataFetchingRoutes/schemesOffers';
+// import setupBagLiftsGetRoutes from './src/routes/dataFetchingRoutes/bagsLift';
+// import setupPointsLedgerGetRoutes from './src/routes/dataFetchingRoutes/pointsLedger';
+// import setupRewardCategoriesGetRoutes from './src/routes/dataFetchingRoutes/rewardCategories';
+// import setupRewardsGetRoutes from './src/routes/dataFetchingRoutes/rewards';
+// import setupRewardsRedemptionGetRoutes from './src/routes/dataFetchingRoutes/rewardsRedemption';
+// import setupKycSubmissionsRoutes from './src/routes/dataFetchingRoutes/kycSubmissions';
 import setupTechnicalSitesRoutes from './src/routes/dataFetchingRoutes/technicalSites';
-import setupSchemeSlabsGetRoutes from './src/routes/dataFetchingRoutes/schemeSlabs';
-import setupMasonSlabAchievementsGetRoutes from './src/routes/dataFetchingRoutes/masonSlabAchievements';
+// import setupSchemeSlabsGetRoutes from './src/routes/dataFetchingRoutes/schemeSlabs';
+// import setupMasonSlabAchievementsGetRoutes from './src/routes/dataFetchingRoutes/masonSlabAchievements';
 import setupLogisticsIORoutes from './src/routes/dataFetchingRoutes/logisticsIO';
 import setupCollectionReportsRoutes from './src/routes/dataFetchingRoutes/collectionReports';
 import setupOutstandingReportsGetRoutes from './src/routes/dataFetchingRoutes/outstandingReports';
@@ -76,18 +76,18 @@ import setupDealerBrandMappingPostRoutes from './src/routes/formSubmissionRoutes
 import setupAttendanceCheckInRoutes from './src/routes/formSubmissionRoutes/attendanceIn';
 import setupAttendanceCheckOutRoutes from './src/routes/formSubmissionRoutes/attendanceOut';
 import setupTsoMeetingsPostRoutes from './src/routes/formSubmissionRoutes/tsoMeetings';
-import setupMasonOnMeetingPostRoutes from './src/routes/formSubmissionRoutes/masonOnMeeting';
-import setupMasonOnSchemePostRoutes from './src/routes/formSubmissionRoutes/masonOnScheme';
-import setupMasonPcSidePostRoutes from './src/routes/formSubmissionRoutes/masonpcSide';
-import setupSchemesOffersPostRoutes from './src/routes/formSubmissionRoutes/schemesOffers';
-import setupBagLiftsPostRoute from './src/routes/formSubmissionRoutes/bagsLift';
-import setupRewardsRedemptionPostRoute from './src/routes/formSubmissionRoutes/rewardsRedemption';
-import setupKycSubmissionsPostRoute from './src/routes/formSubmissionRoutes/kycSubmission';
-import setupRewardsPostRoute from './src/routes/formSubmissionRoutes/rewards';
-import setupPointsLedgerPostRoutes from './src/routes/dataFetchingRoutes/pointsLedger';
+// import setupMasonOnMeetingPostRoutes from './src/routes/formSubmissionRoutes/masonOnMeeting';
+// import setupMasonOnSchemePostRoutes from './src/routes/formSubmissionRoutes/masonOnScheme';
+// import setupMasonPcSidePostRoutes from './src/routes/formSubmissionRoutes/masonpcSide';
+// import setupSchemesOffersPostRoutes from './src/routes/formSubmissionRoutes/schemesOffers';
+// import setupBagLiftsPostRoute from './src/routes/formSubmissionRoutes/bagsLift';
+// import setupRewardsRedemptionPostRoute from './src/routes/formSubmissionRoutes/rewardsRedemption';
+// import setupKycSubmissionsPostRoute from './src/routes/formSubmissionRoutes/kycSubmission';
+// import setupRewardsPostRoute from './src/routes/formSubmissionRoutes/rewards';
+// import setupPointsLedgerPostRoutes from './src/routes/dataFetchingRoutes/pointsLedger';
 import setupTechnicalSitesPostRoutes from './src/routes/formSubmissionRoutes/technicalSites';
-import setupSchemeSlabsPostRoute from './src/routes/formSubmissionRoutes/schemeSlabs';
-import setupMasonSlabAchievementsPostRoute from './src/routes/formSubmissionRoutes/masonSlabAchievements';
+// import setupSchemeSlabsPostRoute from './src/routes/formSubmissionRoutes/schemeSlabs';
+// import setupMasonSlabAchievementsPostRoute from './src/routes/formSubmissionRoutes/masonSlabAchievements';
 import setupLogisticsIOSubmissionRoute from './src/routes/formSubmissionRoutes/logisticsIO';
 
 
@@ -103,12 +103,12 @@ import setupDailyVisitReportsPatchRoutes from './src/routes/updateRoutes/dvr';
 import setupTechnicalVisitReportsPatchRoutes from './src/routes/updateRoutes/tvr';
 import setupTsoMeetingsPatchRoutes from './src/routes/updateRoutes/tsoMeetings';
 import setupSalesOrdersPatchRoutes from './src/routes/updateRoutes/salesorder';
-import setupMasonPcSidePatchRoutes from './src/routes/updateRoutes/masonpcSide';
-import setupSchemesOffersPatchRoutes from './src/routes/updateRoutes/schemesOffers';
-import setupKycSubmissionsPatchRoute from './src/routes/updateRoutes/kycSubmission';
-import setupRewardsPatchRoute from './src/routes/updateRoutes/rewards';
-import setupRewardsRedemptionPatchRoute from './src/routes/updateRoutes/rewardsRedemption';
-import setupBagLiftsPatchRoute from './src/routes/updateRoutes/bagsLift';
+// import setupMasonPcSidePatchRoutes from './src/routes/updateRoutes/masonpcSide';
+// import setupSchemesOffersPatchRoutes from './src/routes/updateRoutes/schemesOffers';
+// import setupKycSubmissionsPatchRoute from './src/routes/updateRoutes/kycSubmission';
+// import setupRewardsPatchRoute from './src/routes/updateRoutes/rewards';
+// import setupRewardsRedemptionPatchRoute from './src/routes/updateRoutes/rewardsRedemption';
+// import setupBagLiftsPatchRoute from './src/routes/updateRoutes/bagsLift';
 import setupTechnicalSitesUpdateRoutes from './src/routes/updateRoutes/technicalSites';
 import setupLogisticsIOUpdateRoutes from './src/routes/updateRoutes/logisticsIO';
 import setupLeaveUpdateRoute from './src/routes/updateRoutes/salesmanLeaves';
@@ -136,7 +136,7 @@ import setupMicrosoftEmailRoutes from './src/routes/microsoftEmail/emailRoute';
 
 //weirdEMAILWORKERthatwillPOLLevery30s
 // import { EmailSystemWorker } from './src/routes/microsoftEmail/emailsystemworker';
-import { MasterEmailWorker } from "./src/services/masteremailworker";
+//import { MasterEmailWorker } from "./src/services/masteremailworker";
 import setupProjectionRoutes from './src/routes/dataFetchingRoutes/projectionReports';
 import setupProjectionVsActualRoutes from './src/routes/dataFetchingRoutes/projectionVsActualReports';
 import { setupAutoApproveCron } from './src/workers/autoApprove';
@@ -271,19 +271,19 @@ setupSalesOrdersRoutes(app);             // /api/sales-orders/*
 setupSalesmanAttendanceRoutes(app);      // /api/salesman-attendance/*
 
 // mason pc side
-setupMasonStatsRoute(app);
-setupMasonsOnMeetingsGetRoutes(app);
-setupMasonsOnSchemeGetRoutes(app);
-setupMasonsPcSideRoutes(app);
-setupSchemesOffersRoutes(app);
-setupBagLiftsGetRoutes(app);
-setupPointsLedgerGetRoutes(app);
-setupRewardsGetRoutes(app);
-setupRewardsRedemptionGetRoutes(app);
-setupKycSubmissionsRoutes(app);
+// setupMasonStatsRoute(app);
+// setupMasonsOnMeetingsGetRoutes(app);
+// setupMasonsOnSchemeGetRoutes(app);
+// setupMasonsPcSideRoutes(app);
+// setupSchemesOffersRoutes(app);
+// setupBagLiftsGetRoutes(app);
+// setupPointsLedgerGetRoutes(app);
+// setupRewardsGetRoutes(app);
+// setupRewardsRedemptionGetRoutes(app);
+// setupKycSubmissionsRoutes(app);
 setupTechnicalSitesRoutes(app);
-setupSchemeSlabsGetRoutes(app);
-setupMasonSlabAchievementsGetRoutes(app);
+// setupSchemeSlabsGetRoutes(app);
+// setupMasonSlabAchievementsGetRoutes(app);
 
 //logistics
 setupLogisticsIORoutes(app);
@@ -307,17 +307,17 @@ setupAttendanceCheckOutRoutes(app);      // POST /api/attendance/check-out/*
 setupTsoMeetingsPostRoutes(app);         // TSO meeting r ENDPOINT r initiations kaam kore
 
 // mason pc side
-setupMasonOnMeetingPostRoutes(app);
-setupMasonOnSchemePostRoutes(app);
-setupMasonPcSidePostRoutes(app);
-setupSchemesOffersPostRoutes(app);
-setupRewardCategoriesGetRoutes(app);
-setupKycSubmissionsPostRoute(app);
-setupRewardsPostRoute(app);
-setupPointsLedgerPostRoutes(app);
+// setupMasonOnMeetingPostRoutes(app);
+// setupMasonOnSchemePostRoutes(app);
+// setupMasonPcSidePostRoutes(app);
+// setupSchemesOffersPostRoutes(app);
+// setupRewardCategoriesGetRoutes(app);
+// setupKycSubmissionsPostRoute(app);
+// setupRewardsPostRoute(app);
+// setupPointsLedgerPostRoutes(app);
 setupTechnicalSitesPostRoutes(app);
-setupSchemeSlabsPostRoute(app);
-setupMasonSlabAchievementsPostRoute(app);
+// setupSchemeSlabsPostRoute(app);
+// setupMasonSlabAchievementsPostRoute(app);
 
 // logistics
 setupLogisticsIOSubmissionRoute(app);
@@ -351,15 +351,15 @@ setupSalesOrdersPatchRoutes(app);
 setupLeaveUpdateRoute(app);
 
 // mason pc side
-setupMasonPcSidePatchRoutes(app);
-setupSchemesOffersPatchRoutes(app);
-setupBagLiftsPostRoute(app);
-setupRewardsRedemptionPostRoute(app);
-setupKycSubmissionsPatchRoute(app);
-setupRewardsPatchRoute(app);
-setupRewardsRedemptionPatchRoute(app);
-setupBagLiftsPatchRoute(app);
-setupTechnicalSitesUpdateRoutes(app);
+// setupMasonPcSidePatchRoutes(app);
+// setupSchemesOffersPatchRoutes(app);
+// setupBagLiftsPostRoute(app);
+// setupRewardsRedemptionPostRoute(app);
+// setupKycSubmissionsPatchRoute(app);
+// setupRewardsPatchRoute(app);
+// setupRewardsRedemptionPatchRoute(app);
+// setupBagLiftsPatchRoute(app);
+ setupTechnicalSitesUpdateRoutes(app);
 
 //notunrendami
 setupAuthCredentialRoutes(app);
