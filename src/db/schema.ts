@@ -211,6 +211,7 @@ export const dailyVisitReports = pgTable("daily_visit_reports", {
   contactNoOfParty: varchar("contact_no_of_party", { length: 20 }),
   expectedActivationDate: date("expected_activation_date"),
   currentDealerOutstandingAmt: numeric("current_dealer_outstanding_amt", { precision: 14, scale: 2 }),
+  idempotencyKey: varchar("idempotency_key", { length: 255 }),
 
   createdAt: timestamp("created_at", { withTimezone: true, precision: 6 }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true, precision: 6 }).defaultNow().notNull(),

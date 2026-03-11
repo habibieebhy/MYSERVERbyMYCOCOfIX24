@@ -79,6 +79,7 @@ function createAutoCRUD(app: Express, config: {
     if (q.visitType) conds.push(eq(table.visitType, String(q.visitType)));
     if (q.pjpId) conds.push(eq(table.pjpId, String(q.pjpId)));
     if (q.dailyTaskId) conds.push(eq(table.dailyTaskId, String(q.dailyTaskId)));
+    if (q.idempotencyKey) conds.push(eq(table.idempotencyKey, String(q.idempotencyKey)));
 
     if (q.search) {
       const s = `%${String(q.search).trim()}%`;
