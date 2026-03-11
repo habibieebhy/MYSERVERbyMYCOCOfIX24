@@ -203,6 +203,7 @@ export const dailyVisitReports = pgTable("daily_visit_reports", {
   inTimeImageUrl: varchar("in_time_image_url", { length: 500 }),
   outTimeImageUrl: varchar("out_time_image_url", { length: 500 }),
   pjpId: varchar("pjp_id", { length: 255 }).references(() => permanentJourneyPlans.id, { onDelete: "set null" }),
+  dailyTaskId: varchar("daily_task_id", { length: 255 }).references(() => dailyTasks.id, { onDelete: "set null" }),
 
   customerType: varchar("customer_type", { length: 100 }),
   partyType: varchar("party_type", { length: 100 }),
@@ -210,6 +211,7 @@ export const dailyVisitReports = pgTable("daily_visit_reports", {
   contactNoOfParty: varchar("contact_no_of_party", { length: 20 }),
   expectedActivationDate: date("expected_activation_date"),
   currentDealerOutstandingAmt: numeric("current_dealer_outstanding_amt", { precision: 14, scale: 2 }),
+  idempotencyKey: varchar("idempotency_key", { length: 255 }),
 
   createdAt: timestamp("created_at", { withTimezone: true, precision: 6 }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true, precision: 6 }).defaultNow().notNull(),

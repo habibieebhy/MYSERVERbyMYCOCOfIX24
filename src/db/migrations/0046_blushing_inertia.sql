@@ -1,0 +1,1 @@
+ALTER TABLE "daily_visit_reports" ADD COLUMN "idempotency_key" varchar(255);

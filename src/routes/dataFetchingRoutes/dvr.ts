@@ -78,6 +78,8 @@ function createAutoCRUD(app: Express, config: {
     if (q.dealerType) conds.push(eq(table.dealerType, String(q.dealerType)));
     if (q.visitType) conds.push(eq(table.visitType, String(q.visitType)));
     if (q.pjpId) conds.push(eq(table.pjpId, String(q.pjpId)));
+    if (q.dailyTaskId) conds.push(eq(table.dailyTaskId, String(q.dailyTaskId)));
+    if (q.idempotencyKey) conds.push(eq(table.idempotencyKey, String(q.idempotencyKey)));
 
     if (q.search) {
       const s = `%${String(q.search).trim()}%`;
@@ -231,6 +233,33 @@ function createAutoCRUD(app: Express, config: {
       res.json({ success: true, page: pg, limit: lmt, count: data.length, data });
     } catch (error) {
       console.error(`Get ${tableName}s by PJP error:`, error);
+      res.status(500).json({ success: false, error: `Failed to fetch ${tableName}s` });
+    }
+  });
+
+  // ===== GET BY DAILY TASK ID =====
+  app.get(`/api/${endpoint}/task/:dailyTaskId`, async (req: Request, res: Response) => {
+    try {
+      const { dailyTaskId } = req.params;
+      const { limit = '50', page = '1', sortBy, sortDir, ...rest } = req.query;
+      const lmt = Math.max(1, Math.min(500, parseInt(String(limit), 10) || 50));
+      const pg = Math.max(1, parseInt(String(page), 10) || 1);
+      const offset = (pg - 1) * lmt;
+
+      const base = eq(table.dailyTaskId, dailyTaskId);
+      const extra = buildWhere(rest);
+      const whereCond = extra ? and(base, extra) : base;
+
+      const orderExpr = buildSort(String(sortBy), String(sortDir));
+
+      let q = getBaseQuery().$dynamic(); 
+      if (whereCond) q = q.where(whereCond);
+
+      const data = await q.orderBy(orderExpr).limit(lmt).offset(offset);
+
+      res.json({ success: true, page: pg, limit: lmt, count: data.length, data });
+    } catch (error) {
+      console.error(`Get ${tableName}s by Task ID error:`, error);
       res.status(500).json({ success: false, error: `Failed to fetch ${tableName}s` });
     }
   });

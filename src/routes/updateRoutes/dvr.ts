@@ -56,6 +56,8 @@ const dvrPatchSchema = z
     inTimeImageUrl: strOrNull,
     outTimeImageUrl: strOrNull,
     pjpId: z.string().max(255).nullable().optional(),
+    dailyTaskId: strOrNull,
+    idempotencyKey: strOrNull,
   });
 
 export default function setupDailyVisitReportsPatchRoutes(app: Express) {
@@ -119,6 +121,8 @@ export default function setupDailyVisitReportsPatchRoutes(app: Express) {
       if (input.inTimeImageUrl !== undefined) patch.inTimeImageUrl = input.inTimeImageUrl;
       if (input.outTimeImageUrl !== undefined) patch.outTimeImageUrl = input.outTimeImageUrl;
       if (input.pjpId !== undefined) patch.pjpId = input.pjpId;
+      if (input.dailyTaskId !== undefined) patch.dailyTaskId = input.dailyTaskId;
+      if (input.idempotencyKey !== undefined) patch.idempotencyKey = input.idempotencyKey;
 
       const [updated] = await db
         .update(dailyVisitReports)
