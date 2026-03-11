@@ -56,6 +56,7 @@ const dvrInputSchema = z
     inTimeImageUrl: strOrNull,
     outTimeImageUrl: strOrNull,
     pjpId: strOrNull,
+    dailyTaskId: strOrNull,
   });
 
 export default function setupDailyVisitReportsPostRoutes(app: Express) {
@@ -103,6 +104,7 @@ export default function setupDailyVisitReportsPostRoutes(app: Express) {
         inTimeImageUrl: input.inTimeImageUrl ?? null,
         outTimeImageUrl: input.outTimeImageUrl ?? null,
         pjpId: input.pjpId ?? null,
+        dailyTaskId: input.dailyTaskId ?? null,
       };
 
       const [record] = await db.insert(dailyVisitReports).values(insertData).returning();

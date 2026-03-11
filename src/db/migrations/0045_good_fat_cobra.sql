@@ -1,0 +1,2 @@
+ALTER TABLE "daily_visit_reports" ADD COLUMN "daily_task_id" varchar(255);--> statement-breakpoint
+ALTER TABLE "daily_visit_reports" ADD CONSTRAINT "daily_visit_reports_daily_task_id_daily_tasks_id_fk" FOREIGN KEY ("daily_task_id") REFERENCES "public"."daily_tasks"("id") ON DELETE set null ON UPDATE no action;

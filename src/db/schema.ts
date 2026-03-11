@@ -203,6 +203,7 @@ export const dailyVisitReports = pgTable("daily_visit_reports", {
   inTimeImageUrl: varchar("in_time_image_url", { length: 500 }),
   outTimeImageUrl: varchar("out_time_image_url", { length: 500 }),
   pjpId: varchar("pjp_id", { length: 255 }).references(() => permanentJourneyPlans.id, { onDelete: "set null" }),
+  dailyTaskId: varchar("daily_task_id", { length: 255 }).references(() => dailyTasks.id, { onDelete: "set null" }),
 
   customerType: varchar("customer_type", { length: 100 }),
   partyType: varchar("party_type", { length: 100 }),
