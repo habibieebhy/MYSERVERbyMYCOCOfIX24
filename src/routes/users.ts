@@ -15,8 +15,8 @@ function toJsonSafe(obj: any): any {
   ));
 }
 
-/**
- * Defines the set of user fields that are safe to return to the public.
+/*
+ * 123Defines the set of user fields that are safe to return to the public.
  * This object is reused in all 'select' queries to ensure consistency
  * and prevent accidental exposure of sensitive data like 'hashedPassword'.
  */
