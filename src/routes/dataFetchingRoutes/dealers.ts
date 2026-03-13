@@ -191,8 +191,8 @@ function createAutoCRUD(app: Express, config: {
         q = q.where(whereCondition);
       }
       // 3. Apply sorting/paging and execute
-      const data = await q.orderBy(orderExpr).limit(lmt).offset(offset);
-
+      const data = await q.orderBy(orderExpr, asc(table.id)).limit(lmt).offset(offset);
+      
       res.json({ success: true, page: pg, limit: lmt, count: data.length, data });
     } catch (error) {
       console.error(`Get ${tableName}s error:`, error);
