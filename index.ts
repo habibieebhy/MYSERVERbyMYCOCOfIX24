@@ -145,8 +145,8 @@ import { setupAutoApproveCron } from './src/workers/autoApprove';
 //---------------------------------------------
 //----------------MainMasterEMAILWORKER--------------------
 
-const emailRouter = new MasterEmailWorker();
-emailRouter.Start();
+// const emailRouter = new MasterEmailWorker();
+// emailRouter.Start();
 
 //----------------MainMasterEMAILWORKER--------------------
 //---------------------------------------------
