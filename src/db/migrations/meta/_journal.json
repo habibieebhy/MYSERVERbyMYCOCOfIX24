@@ -330,6 +330,13 @@
       "when": 1773232191210,
       "tag": "0046_blushing_inertia",
       "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "7",
+      "when": 1773598595589,
+      "tag": "0047_clear_captain_britain",
+      "breakpoints": true
     }
   ]
 }

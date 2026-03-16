@@ -180,8 +180,42 @@ app.use(express.json());
 app.use(express.static(path.join(process.cwd(), 'public')));
 
 // Simple logging middleware to see incoming requests
+
+
+
+
+// app.use((req: Request, res: Response, next: NextFunction) => {
+//   console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+//   next();
+// });
+
+
+
+
+//old one^^^^^
 app.use((req: Request, res: Response, next: NextFunction) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  const forwarded = req.headers['x-forwarded-for'];
+  const realIp = Array.isArray(forwarded)
+    ? forwarded[0]
+    : forwarded?.split(',')[0];
+
+  const ip =
+    realIp ||
+    req.socket.remoteAddress ||
+    'unknown';
+
+  const userAgent = req.headers['user-agent'] || 'unknown';
+
+  console.log(
+    `[${new Date().toISOString()}]`,
+    'IP:', ip,
+    '|',
+    req.method,
+    req.url,
+    '| UA:',
+    userAgent
+  );
+
   next();
 });
 
