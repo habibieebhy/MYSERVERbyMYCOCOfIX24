@@ -39,4 +39,4 @@ jobs:
           context: .
           push: true
           tags: |
-            zahrbrixta/mycocoserverfixtwentyfour:mark7
+            zahrbrixta/mycocoserverfixtwentyfour:mark8
