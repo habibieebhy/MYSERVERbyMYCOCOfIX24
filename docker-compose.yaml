@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
     # Maps host port 4000 to the container's exposed port 8000 (from your Dockerfile)
     ports:
-      - "8000:8000"
+      - "55000:8000"
     # Tells Docker Compose to read environment variables from a .env file in the same directory
     env_file:
       - .env

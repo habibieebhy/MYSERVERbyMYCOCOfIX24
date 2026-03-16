@@ -604,6 +604,10 @@ export const journeys = pgTable("journeys", {
   siteName: varchar("site_name", { length: 255 }),
   destLat: numeric("dest_lat", { precision: 10, scale: 7 }),
   destLng: numeric("dest_lng", { precision: 10, scale: 7 }),
+
+  // 🚀 NEW: The backend backpack for the Red Line
+  plannedRouteJson: jsonb("planned_route_json"),
+
   status: varchar("status", { length: 50 }).default('ACTIVE').notNull(),
   isActive: boolean("is_active").default(true),
   startTime: timestamp("start_time", { withTimezone: true, precision: 6 }).defaultNow().notNull(),
@@ -1231,7 +1235,7 @@ export const logisticsUsers = pgTable("logistics_users", {
   userName: varchar("user_name", { length: 255 }).unique().notNull(),
   userPassword: varchar("user_password", { length: 255 }).notNull(),
   userRole: varchar("user_role", { length: 255 }).notNull(), // 'GATE', 'WB', 'STORE', 'ADMIN' etc.
-  
+
   createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
   updatedAt: timestamp("updatedAt", { mode: "date" })
     .defaultNow()
