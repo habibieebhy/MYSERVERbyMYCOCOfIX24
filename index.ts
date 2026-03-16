@@ -220,11 +220,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
-<<<<<<< HEAD
-// --- API Routes ----
-=======
-// --- API Routes --
->>>>>>> 5da000d (MARK 8 A)
+
 
 // A simple health-check or welcome route
 app.get('/api', (req: Request, res: Response) => {
