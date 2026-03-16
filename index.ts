@@ -219,7 +219,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
-// --- API Routes ---
+// --- API Routes ----
 
 // A simple health-check or welcome route
 app.get('/api', (req: Request, res: Response) => {
