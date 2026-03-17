@@ -28,7 +28,7 @@ const dvrInputSchema = z
     subDealerId: strOrNull,
     reportDate: z.coerce.date(),
     dealerType: z.string().max(50),
-    
+
     customerType: strOrNull,
     partyType: strOrNull,
     nameOfParty: strOrNull,
@@ -38,10 +38,13 @@ const dvrInputSchema = z
     location: z.string().max(500),
     latitude: z.coerce.number(),
     longitude: z.coerce.number(),
-    visitType: z.string().max(50), 
+    visitType: z.string().max(50),
     dealerTotalPotential: z.coerce.number(),
     dealerBestPotential: z.coerce.number(),
-    brandSelling: z.preprocess(toStringArray, z.array(z.string()).min(1)),
+    brandSelling: z.preprocess(
+      toStringArray,
+      z.array(z.string()).optional().nullable().default([])
+    ),
     contactPerson: strOrNull,
     contactPersonPhoneNo: strOrNull,
     todayOrderMt: z.coerce.number(),
@@ -62,7 +65,7 @@ const dvrInputSchema = z
 
 export default function setupDailyVisitReportsPostRoutes(app: Express) {
   app.post('/api/daily-visit-reports', async (req: Request, res: Response) => {
-    
+
     // console.log('Incoming req.body keys:', Object.keys(req.body));
     // console.log('Raw req.body:', JSON.stringify(req.body, null, 2));
 
