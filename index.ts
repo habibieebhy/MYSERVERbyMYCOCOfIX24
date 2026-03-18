@@ -136,7 +136,7 @@ import setupMicrosoftEmailRoutes from './src/routes/microsoftEmail/emailRoute';
 
 //weirdEMAILWORKERthatwillPOLLevery30s
 // import { EmailSystemWorker } from './src/routes/microsoftEmail/emailsystemworker';
-import { MasterEmailWorker } from "./src/services/masteremailworker";
+// import { MasterEmailWorker } from "./src/services/masteremailworker";
 import setupProjectionRoutes from './src/routes/dataFetchingRoutes/projectionReports';
 import setupProjectionVsActualRoutes from './src/routes/dataFetchingRoutes/projectionVsActualReports';
 import { setupAutoApproveCron } from './src/workers/autoApprove';
@@ -233,6 +233,8 @@ app.get('/api', (req: Request, res: Response) => {
 // --- Modular Route Setup ---
 console.log('🔌 Registering API routes...');
 
+console.log('CRON JOB IS RUNNING!!');
+setupAutoApproveCron();
 //colection reprts from MAIL NIGGA
 setupCollectionReportsRoutes(app);
 setupOutstandingReportsGetRoutes(app);
