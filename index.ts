@@ -233,8 +233,9 @@ app.get('/api', (req: Request, res: Response) => {
 // --- Modular Route Setup ---
 console.log('🔌 Registering API routes...');
 
-console.log('CRON JOB IS RUNNING!!');
+
 setupAutoApproveCron();
+console.log('CRON JOB IS RUNNING!!');
 //colection reprts from MAIL NIGGA
 setupCollectionReportsRoutes(app);
 setupOutstandingReportsGetRoutes(app);

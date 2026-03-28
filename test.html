@@ -1,0 +1,1223 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CementOS — Plant Management System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg0:#0C0E13;
+  --bg1:#13161E;
+  --bg2:#1C2030;
+  --bg3:#242840;
+  --amber:#F5A623;
+  --amber2:#E8891A;
+  --coral:#E85D24;
+  --teal:#1DB8A3;
+  --blue:#3D8EF0;
+  --red:#E74C3C;
+  --green:#27AE60;
+  --text1:#EAE8E2;
+  --text2:#9E9C96;
+  --text3:#5C5A56;
+  --border:rgba(255,255,255,0.07);
+  --border2:rgba(255,255,255,0.12);
+  --card:rgba(255,255,255,0.04);
+  --radius:12px;
+  --radius-sm:8px;
+  --font-head:'Barlow Condensed',sans-serif;
+  --font-body:'IBM Plex Sans',sans-serif;
+  --font-mono:'IBM Plex Mono',monospace;
+}
+html,body{height:100%;background:var(--bg0);color:var(--text1);font-family:var(--font-body);font-size:14px;overflow:hidden}
+
+/* ─── LAYOUT ─── */
+.app{display:flex;height:100vh;overflow:hidden}
+
+/* ─── SIDEBAR ─── */
+.sidebar{
+  width:220px;flex-shrink:0;
+  background:var(--bg1);
+  border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  overflow:hidden;
+}
+.logo{
+  padding:20px 20px 16px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+}
+.logo-mark{
+  width:32px;height:32px;
+  background:var(--amber);
+  border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.logo-mark svg{width:18px;height:18px;fill:var(--bg0)}
+.logo-text{
+  font-family:var(--font-head);
+  font-size:20px;font-weight:800;
+  letter-spacing:.5px;
+  line-height:1.1;
+  color:var(--text1);
+}
+.logo-sub{font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;font-weight:500}
+
+.plant-badge{
+  margin:12px;
+  padding:10px 12px;
+  background:var(--bg2);
+  border-radius:var(--radius-sm);
+  border:1px solid var(--border);
+}
+.plant-name{font-size:12px;font-weight:600;color:var(--text1)}
+.plant-status{display:flex;align-items:center;gap:5px;margin-top:3px}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green)}
+.plant-status span{font-size:11px;color:var(--text2)}
+
+.nav{flex:1;padding:8px 0;overflow-y:auto}
+.nav-section{
+  padding:4px 12px 2px;
+  font-size:10px;font-weight:600;
+  color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;
+  margin-top:8px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;margin:1px 8px;
+  border-radius:var(--radius-sm);
+  cursor:pointer;transition:all .15s;
+  color:var(--text2);font-size:13px;font-weight:500;
+  position:relative;
+}
+.nav-item:hover{background:var(--card);color:var(--text1)}
+.nav-item.active{background:rgba(245,166,35,0.12);color:var(--amber)}
+.nav-item.active::before{
+  content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:3px;height:20px;background:var(--amber);border-radius:0 3px 3px 0;
+}
+.nav-icon{width:16px;height:16px;flex-shrink:0;opacity:.8}
+.badge{
+  margin-left:auto;
+  padding:1px 6px;border-radius:10px;
+  background:var(--coral);color:#fff;
+  font-size:10px;font-weight:600;
+}
+
+.sidebar-footer{
+  padding:12px;border-top:1px solid var(--border);
+}
+.user-row{display:flex;align-items:center;gap:9px}
+.avatar{
+  width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,#F5A623,#E85D24);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-head);font-size:14px;font-weight:700;color:#fff;flex-shrink:0;
+}
+.user-name{font-size:12px;font-weight:600;color:var(--text1)}
+.user-role{font-size:10px;color:var(--text3)}
+
+/* ─── MAIN ─── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+
+/* ─── TOPBAR ─── */
+.topbar{
+  height:56px;flex-shrink:0;
+  background:var(--bg1);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 24px;gap:16px;
+}
+.page-title{font-family:var(--font-head);font-size:22px;font-weight:700;letter-spacing:.3px;color:var(--text1)}
+.page-sub{font-size:12px;color:var(--text3);margin-left:4px;font-weight:400}
+.topbar-spacer{flex:1}
+.topbar-actions{display:flex;align-items:center;gap:10px}
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:7px 14px;border-radius:var(--radius-sm);
+  border:none;cursor:pointer;font-family:var(--font-body);
+  font-size:12px;font-weight:600;transition:all .15s;
+  text-transform:uppercase;letter-spacing:.5px;
+}
+.btn-amber{background:var(--amber);color:var(--bg0)}
+.btn-amber:hover{background:var(--amber2)}
+.btn-ghost{background:var(--card);color:var(--text2);border:1px solid var(--border2)}
+.btn-ghost:hover{background:var(--bg2);color:var(--text1)}
+.topbar-icon{
+  width:36px;height:36px;border-radius:var(--radius-sm);
+  background:var(--card);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;position:relative;
+}
+.notif-dot{
+  position:absolute;top:6px;right:6px;
+  width:7px;height:7px;border-radius:50%;
+  background:var(--coral);border:1.5px solid var(--bg1);
+}
+.date-chip{
+  font-size:11px;color:var(--text2);
+  background:var(--bg2);border:1px solid var(--border);
+  padding:5px 10px;border-radius:6px;
+  font-family:var(--font-mono);
+}
+
+/* ─── CONTENT ─── */
+.content{flex:1;overflow-y:auto;padding:20px 24px;display:none}
+.content.active{display:block}
+
+/* scrollbar */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:4px}
+
+/* ─── KPI ROW ─── */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.kpi-card{
+  background:var(--bg1);border:1px solid var(--border);
+  border-radius:var(--radius);padding:16px;
+  position:relative;overflow:hidden;transition:border-color .2s;
+}
+.kpi-card:hover{border-color:var(--border2)}
+.kpi-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  border-radius:var(--radius) var(--radius) 0 0;
+}
+.kpi-card.amber::before{background:var(--amber)}
+.kpi-card.coral::before{background:var(--coral)}
+.kpi-card.teal::before{background:var(--teal)}
+.kpi-card.blue::before{background:var(--blue)}
+.kpi-card.green::before{background:var(--green)}
+.kpi-label{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:1px;text-transform:uppercase}
+.kpi-value{font-family:var(--font-head);font-size:34px;font-weight:800;margin:6px 0 4px;letter-spacing:.5px}
+.kpi-sub{font-size:11px;color:var(--text2);display:flex;align-items:center;gap:4px}
+.change{font-size:11px;font-weight:600;padding:2px 6px;border-radius:4px}
+.change.up{background:rgba(39,174,96,.15);color:#2ecc71}
+.change.down{background:rgba(231,76,60,.15);color:var(--red)}
+.kpi-icon{
+  position:absolute;right:14px;top:14px;
+  width:32px;height:32px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  opacity:.15;
+}
+
+/* ─── GRID ─── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.grid-3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:14px;margin-bottom:14px}
+.grid-3b{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+.card{
+  background:var(--bg1);border:1px solid var(--border);
+  border-radius:var(--radius);overflow:hidden;
+}
+.card-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px;border-bottom:1px solid var(--border);
+}
+.card-title{font-family:var(--font-head);font-size:16px;font-weight:700;letter-spacing:.3px}
+.card-action{font-size:11px;color:var(--amber);cursor:pointer;font-weight:600;letter-spacing:.5px;text-transform:uppercase}
+.card-body{padding:14px 16px}
+
+/* ─── PRODUCTION GAUGES ─── */
+.gauges{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:14px 16px}
+.gauge-item{text-align:center}
+.gauge-ring{position:relative;width:90px;height:90px;margin:0 auto 8px}
+.gauge-ring svg{width:90px;height:90px;transform:rotate(-90deg)}
+.gauge-ring circle{fill:none;stroke-linecap:round}
+.gauge-bg{stroke:var(--bg3);stroke-width:7}
+.gauge-fill{stroke-width:7;transition:stroke-dasharray 1s ease}
+.gauge-label{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-family:var(--font-head);font-size:18px;font-weight:800;
+}
+.gauge-name{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px}
+.gauge-val{font-size:11px;color:var(--text2);margin-top:2px}
+
+/* ─── ORDERS TABLE ─── */
+.order-table{width:100%;border-collapse:collapse}
+.order-table th{
+  font-size:10px;font-weight:600;color:var(--text3);
+  letter-spacing:1px;text-transform:uppercase;
+  padding:8px 12px;text-align:left;
+  border-bottom:1px solid var(--border);
+}
+.order-table td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:13px}
+.order-table tr:last-child td{border-bottom:none}
+.order-table tr:hover td{background:var(--card)}
+.status-pill{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700;
+  letter-spacing:.5px;text-transform:uppercase;
+}
+.s-delivered{background:rgba(39,174,96,.15);color:#2ecc71}
+.s-transit{background:rgba(61,142,240,.15);color:var(--blue)}
+.s-pending{background:rgba(245,166,35,.15);color:var(--amber)}
+.s-processing{background:rgba(29,184,163,.15);color:var(--teal)}
+.s-failed{background:rgba(231,76,60,.15);color:var(--red)}
+.order-id{font-family:var(--font-mono);font-size:12px;color:var(--amber)}
+
+/* ─── FLEET ─── */
+.fleet-list{padding:0 16px 14px}
+.fleet-item{
+  display:flex;align-items:center;gap:12px;
+  padding:11px 0;border-bottom:1px solid var(--border);
+}
+.fleet-item:last-child{border-bottom:none}
+.truck-icon{
+  width:38px;height:38px;border-radius:9px;
+  background:var(--bg2);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.fleet-info{flex:1;min-width:0}
+.fleet-num{font-size:13px;font-weight:600;font-family:var(--font-mono)}
+.fleet-route{font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fleet-stat{text-align:right}
+.fleet-km{font-family:var(--font-head);font-size:16px;font-weight:700}
+.fleet-eta{font-size:10px;color:var(--text2)}
+.prog-bar{height:3px;background:var(--bg3);border-radius:2px;margin-top:5px}
+.prog-fill{height:100%;border-radius:2px;transition:width 1s}
+
+/* ─── INVENTORY ─── */
+.inv-list{padding:0 16px 14px}
+.inv-item{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 0;border-bottom:1px solid var(--border);
+}
+.inv-item:last-child{border-bottom:none}
+.inv-name{flex:1;font-size:13px;font-weight:500}
+.inv-qty{font-family:var(--font-head);font-size:15px;font-weight:700;text-align:right;min-width:60px}
+.inv-bar-wrap{flex:1;max-width:100px}
+.inv-bar-bg{height:5px;background:var(--bg3);border-radius:3px}
+.inv-bar-fill{height:100%;border-radius:3px}
+
+/* ─── ALERTS ─── */
+.alerts{padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.alert-item{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:10px 12px;border-radius:var(--radius-sm);
+  border:1px solid;
+}
+.alert-icon{width:16px;height:16px;flex-shrink:0;margin-top:1px}
+.alert-msg{font-size:12px;line-height:1.5}
+.alert-time{font-size:10px;color:var(--text3);margin-top:2px;font-family:var(--font-mono)}
+.alert-warn{background:rgba(245,166,35,.08);border-color:rgba(245,166,35,.25)}
+.alert-err{background:rgba(231,76,60,.08);border-color:rgba(231,76,60,.25)}
+.alert-ok{background:rgba(39,174,96,.08);border-color:rgba(39,174,96,.25)}
+
+/* ─── SALES PIPELINE ─── */
+.pipeline-stages{display:flex;gap:10px;padding:14px 16px;overflow-x:auto}
+.pipeline-col{flex:1;min-width:140px}
+.pipeline-head{
+  font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  color:var(--text3);padding:0 2px 8px;display:flex;justify-content:space-between;
+}
+.pipeline-count{
+  background:var(--bg3);color:var(--text2);
+  padding:1px 6px;border-radius:10px;font-size:10px;
+}
+.pipeline-card{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:10px 11px;margin-bottom:7px;
+  cursor:pointer;transition:border-color .15s;
+}
+.pipeline-card:hover{border-color:var(--amber)}
+.pc-company{font-size:12px;font-weight:600}
+.pc-grade{font-size:11px;color:var(--text3);margin-top:2px}
+.pc-amount{font-family:var(--font-head);font-size:16px;font-weight:700;margin-top:6px}
+.pc-amount span{font-size:11px;color:var(--text2);font-family:var(--font-body);font-weight:400}
+
+/* ─── PRODUCTION PAGE ─── */
+.prod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:14px}
+.machine-card{
+  background:var(--bg1);border:1px solid var(--border);
+  border-radius:var(--radius);padding:16px;
+  position:relative;
+}
+.machine-name{font-family:var(--font-head);font-size:18px;font-weight:700;margin-bottom:4px}
+.machine-status{display:flex;align-items:center;gap:6px;margin-bottom:14px}
+.m-running{color:var(--green)}
+.m-idle{color:var(--amber)}
+.m-stopped{color:var(--red)}
+.machine-metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.mm-item{}
+.mm-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;font-weight:600}
+.mm-value{font-family:var(--font-head);font-size:22px;font-weight:800;margin-top:2px}
+.mm-unit{font-size:11px;color:var(--text2);font-family:var(--font-body);font-weight:400;margin-left:2px}
+.sparkline{height:36px;margin-top:12px;border-top:1px solid var(--border);padding-top:8px}
+
+/* ─── ATTENDANCE PAGE ─── */
+.att-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px}
+.emp-card{
+  background:var(--bg1);border:1px solid var(--border);
+  border-radius:var(--radius);padding:14px;
+  display:flex;align-items:center;gap:12px;
+  cursor:pointer;transition:border-color .15s;
+}
+.emp-card:hover{border-color:var(--amber)}
+.emp-avatar{
+  width:40px;height:40px;border-radius:50%;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-head);font-size:16px;font-weight:700;color:#fff;
+}
+.emp-info{flex:1;min-width:0}
+.emp-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.emp-dept{font-size:11px;color:var(--text3)}
+.emp-time{font-size:11px;font-family:var(--font-mono);color:var(--text2);margin-top:3px}
+.att-status{flex-shrink:0}
+.att-in{color:var(--green);font-size:10px;font-weight:700;text-transform:uppercase}
+.att-out{color:var(--red);font-size:10px;font-weight:700;text-transform:uppercase}
+.att-late{color:var(--amber);font-size:10px;font-weight:700;text-transform:uppercase}
+
+/* ─── CHART CANVAS ─── */
+.chart-wrap{padding:14px 16px;position:relative}
+canvas{display:block;max-height:200px}
+
+/* ─── LIVE TICKER ─── */
+.ticker{
+  background:var(--bg0);border-bottom:1px solid var(--border);
+  padding:6px 24px;display:flex;align-items:center;gap:20px;
+  font-family:var(--font-mono);font-size:11px;overflow:hidden;
+}
+.ticker-item{display:flex;align-items:center;gap:6px;white-space:nowrap;color:var(--text2)}
+.ticker-item strong{color:var(--text1)}
+.ticker-sep{color:var(--border2);font-size:16px}
+.live-pill{
+  display:flex;align-items:center;gap:4px;
+  background:rgba(39,174,96,.12);color:var(--green);
+  padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700;
+  letter-spacing:.5px;margin-right:4px;
+}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ─── SECTION HEADER ─── */
+.sec-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:12px;
+}
+.sec-title{font-family:var(--font-head);font-size:18px;font-weight:700;letter-spacing:.3px}
+.tab-pills{display:flex;gap:4px;background:var(--bg2);padding:3px;border-radius:8px;border:1px solid var(--border)}
+.tab-pill{padding:4px 12px;border-radius:6px;font-size:11px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .15s;text-transform:uppercase;letter-spacing:.5px}
+.tab-pill.active{background:var(--amber);color:var(--bg0)}
+
+/* ─── MAP PLACEHOLDER ─── */
+.map-ph{
+  background:var(--bg2);border-radius:var(--radius-sm);
+  height:160px;margin:0 16px 14px;
+  display:flex;align-items:center;justify-content:center;
+  border:1px dashed var(--border2);position:relative;overflow:hidden;
+}
+.map-grid{
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(var(--border) 1px,transparent 1px),
+    linear-gradient(90deg,var(--border) 1px,transparent 1px);
+  background-size:30px 30px;
+  opacity:.5;
+}
+.truck-dot{
+  position:absolute;width:10px;height:10px;border-radius:50%;
+  background:var(--amber);box-shadow:0 0 0 3px rgba(245,166,35,.2);
+}
+.map-label{font-size:11px;color:var(--text2);z-index:1}
+
+/* ─── SEPARATOR ─── */
+.divider{height:1px;background:var(--border);margin:14px 0}
+
+/* ─── SHIFT TABLE ─── */
+.shift-row{display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border);gap:12px}
+.shift-row:last-child{border-bottom:none}
+.shift-tag{
+  font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;
+  letter-spacing:.5px;text-transform:uppercase;flex-shrink:0;width:60px;text-align:center;
+}
+.shift-a{background:rgba(245,166,35,.15);color:var(--amber)}
+.shift-b{background:rgba(61,142,240,.15);color:var(--blue)}
+.shift-c{background:rgba(29,184,163,.15);color:var(--teal)}
+.shift-info{flex:1}
+.shift-name{font-size:12px;font-weight:600}
+.shift-time{font-size:11px;color:var(--text3);font-family:var(--font-mono)}
+.shift-count{font-family:var(--font-head);font-size:20px;font-weight:800}
+
+/* ─── NOTIFICATION BADGE ─── */
+.n-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:18px;height:18px;border-radius:50%;
+  background:var(--coral);color:#fff;font-size:10px;font-weight:700;
+  position:absolute;top:-5px;right:-5px;
+}
+</style>
+</head>
+<body>
+<div class="app">
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24"><path d="M3 21h18v-2H3v2zm0-4h18v-2H3v2zm0-4h18v-2H3v2zm0-4h18V7H3v2zm0-6v2h18V3H3z"/></svg>
+    </div>
+    <div>
+      <div class="logo-text">CementOS</div>
+      <div class="logo-sub">v2.4.1</div>
+    </div>
+  </div>
+
+  <div class="plant-badge">
+    <div class="plant-name">Brahmaputra Plant — Unit 2</div>
+    <div class="plant-status">
+      <div class="dot"></div>
+      <span>All systems operational</span>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <div class="nav-section">Core</div>
+    <div class="nav-item active" onclick="showPage('dashboard')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item" onclick="showPage('production')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+      Live Production
+    </div>
+    <div class="nav-item" onclick="showPage('orders')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+      Orders
+      <span class="badge">7</span>
+    </div>
+    <div class="nav-section">Operations</div>
+    <div class="nav-item" onclick="showPage('fleet')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4zm-.5 1.5l1.96 2.5H17V9.5h2.5zM6 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm13.5-1.5c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5.67-1.5 1.5-1.5 1.5.67 1.5 1.5z"/></svg>
+      Fleet & Logistics
+    </div>
+    <div class="nav-item" onclick="showPage('inventory')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M20 7h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zm-8-3h4v3h-4V4z"/></svg>
+      Inventory
+    </div>
+    <div class="nav-item" onclick="showPage('attendance')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+      Attendance
+    </div>
+    <div class="nav-section">Intelligence</div>
+    <div class="nav-item" onclick="showPage('sales')">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+      Sales CRM
+    </div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+      Analytics
+    </div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+      Quality Control
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-row">
+      <div class="avatar">RB</div>
+      <div>
+        <div class="user-name">Rajiv Baruah</div>
+        <div class="user-role">Plant Manager</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN AREA -->
+<div class="main">
+  <!-- LIVE TICKER -->
+  <div class="ticker">
+    <div class="live-pill"><div class="live-dot"></div>LIVE</div>
+    <div class="ticker-item">Kiln Temp <strong>1382°C</strong></div>
+    <div class="ticker-sep">|</div>
+    <div class="ticker-item">Clinker Output <strong>142 MT/hr</strong></div>
+    <div class="ticker-sep">|</div>
+    <div class="ticker-item">Power Draw <strong>4.2 MW</strong></div>
+    <div class="ticker-sep">|</div>
+    <div class="ticker-item">OPC-53 Stock <strong>8,420 bags</strong></div>
+    <div class="ticker-sep">|</div>
+    <div class="ticker-item">Trucks Active <strong>12 / 15</strong></div>
+    <div class="ticker-sep">|</div>
+    <div class="ticker-item">Today Revenue <strong>₹28.4L</strong></div>
+  </div>
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div>
+      <div class="page-title" id="pageTitle">Command Centre</div>
+    </div>
+    <div class="topbar-spacer"></div>
+    <div class="topbar-actions">
+      <div class="date-chip" id="liveClock">Loading...</div>
+      <div class="topbar-icon" style="position:relative">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--text2)"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+        <div class="notif-dot"></div>
+      </div>
+      <button class="btn btn-amber" onclick="showPage('orders')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6z"/></svg>
+        New Order
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════ DASHBOARD PAGE ══════ -->
+  <div class="content active" id="page-dashboard">
+    <div class="kpi-row">
+      <div class="kpi-card amber">
+        <div class="kpi-label">Today's Production</div>
+        <div class="kpi-value" style="color:var(--amber)">3,842 <span style="font-size:16px;color:var(--text2)">MT</span></div>
+        <div class="kpi-sub"><span class="change up">▲ 6.2%</span> vs yesterday</div>
+      </div>
+      <div class="kpi-card coral">
+        <div class="kpi-label">Revenue Today</div>
+        <div class="kpi-value" style="color:var(--coral)">₹28.4L</div>
+        <div class="kpi-sub"><span class="change up">▲ 11.3%</span> vs last week</div>
+      </div>
+      <div class="kpi-card teal">
+        <div class="kpi-label">Active Orders</div>
+        <div class="kpi-value" style="color:var(--teal)">47</div>
+        <div class="kpi-sub"><span class="change up">▲ 3</span> new since 9 AM</div>
+      </div>
+      <div class="kpi-card blue">
+        <div class="kpi-label">Trucks on Road</div>
+        <div class="kpi-value" style="color:var(--blue)">12</div>
+        <div class="kpi-sub"><span style="color:var(--text2)">3 loading · 0 breakdown</span></div>
+      </div>
+    </div>
+
+    <div class="grid-3">
+      <!-- Production trend -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">Production This Week</div>
+          <div class="tab-pills">
+            <div class="tab-pill active">MT</div>
+            <div class="tab-pill">KWH</div>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="prodChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Kiln Gauges -->
+      <div class="card">
+        <div class="card-head"><div class="card-title">Equipment Status</div><div class="card-action">Details →</div></div>
+        <div class="gauges">
+          <div class="gauge-item">
+            <div class="gauge-ring">
+              <svg viewBox="0 0 90 90">
+                <circle class="gauge-bg" cx="45" cy="45" r="38" stroke-dasharray="239" stroke-dashoffset="0"/>
+                <circle class="gauge-fill" cx="45" cy="45" r="38" stroke="var(--amber)" stroke-dasharray="215 239"/>
+              </svg>
+              <div class="gauge-label" style="color:var(--amber)">90%</div>
+            </div>
+            <div class="gauge-name">Kiln Load</div>
+            <div class="gauge-val">1382°C</div>
+          </div>
+          <div class="gauge-item">
+            <div class="gauge-ring">
+              <svg viewBox="0 0 90 90">
+                <circle class="gauge-bg" cx="45" cy="45" r="38" stroke-dasharray="239" stroke-dashoffset="0"/>
+                <circle class="gauge-fill" cx="45" cy="45" r="38" stroke="var(--teal)" stroke-dasharray="175 239"/>
+              </svg>
+              <div class="gauge-label" style="color:var(--teal)">73%</div>
+            </div>
+            <div class="gauge-name">Ball Mill</div>
+            <div class="gauge-val">342 RPM</div>
+          </div>
+          <div class="gauge-item">
+            <div class="gauge-ring">
+              <svg viewBox="0 0 90 90">
+                <circle class="gauge-bg" cx="45" cy="45" r="38" stroke-dasharray="239" stroke-dashoffset="0"/>
+                <circle class="gauge-fill" cx="45" cy="45" r="38" stroke="var(--blue)" stroke-dasharray="153 239"/>
+              </svg>
+              <div class="gauge-label" style="color:var(--blue)">64%</div>
+            </div>
+            <div class="gauge-name">Cooler</div>
+            <div class="gauge-val">1120 m³/h</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alerts -->
+      <div class="card">
+        <div class="card-head"><div class="card-title">Live Alerts</div><div class="card-action">All →</div></div>
+        <div class="alerts">
+          <div class="alert-item alert-warn">
+            <svg class="alert-icon" viewBox="0 0 24 24" fill="var(--amber)"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+            <div>
+              <div class="alert-msg">Limestone stock below 5-day threshold. Current: 3.2 days.</div>
+              <div class="alert-time">10:42 AM · Auto purchase request raised</div>
+            </div>
+          </div>
+          <div class="alert-item alert-err">
+            <svg class="alert-icon" viewBox="0 0 24 24" fill="var(--red)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+            <div>
+              <div class="alert-msg">Truck AS-01-TC-4421 — GPS km vs claimed km mismatch (18% variance).</div>
+              <div class="alert-time">09:15 AM · Flag raised to logistics head</div>
+            </div>
+          </div>
+          <div class="alert-item alert-ok">
+            <svg class="alert-icon" viewBox="0 0 24 24" fill="var(--green)"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            <div>
+              <div class="alert-msg">Lot #BPL-2024-0441 quality test passed. OPC-53 grade certified.</div>
+              <div class="alert-time">08:55 AM · Certificate auto-generated</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <!-- Recent Orders -->
+      <div class="card">
+        <div class="card-head"><div class="card-title">Recent Orders</div><div class="card-action" onclick="showPage('orders')">View All →</div></div>
+        <div>
+          <table class="order-table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Grade</th>
+                <th>MT</th>
+                <th>Status</th>
+                <th>₹ Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td><span class="order-id">#ORD-4819</span></td><td>Sharma Infra</td><td>OPC-53</td><td>120</td><td><span class="status-pill s-delivered">Delivered</span></td><td>₹6.2L</td></tr>
+              <tr><td><span class="order-id">#ORD-4818</span></td><td>NE Builders</td><td>PPC</td><td>80</td><td><span class="status-pill s-transit">In Transit</span></td><td>₹3.8L</td></tr>
+              <tr><td><span class="order-id">#ORD-4817</span></td><td>Guwahati Roads</td><td>OPC-43</td><td>200</td><td><span class="status-pill s-processing">Processing</span></td><td>₹9.4L</td></tr>
+              <tr><td><span class="order-id">#ORD-4816</span></td><td>Bora & Sons</td><td>PSC</td><td>50</td><td><span class="status-pill s-pending">Pending</span></td><td>₹2.1L</td></tr>
+              <tr><td><span class="order-id">#ORD-4815</span></td><td>Assam PWD</td><td>OPC-53</td><td>350</td><td><span class="status-pill s-delivered">Delivered</span></td><td>₹18.2L</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Inventory Summary -->
+      <div class="card">
+        <div class="card-head"><div class="card-title">Raw Material Stock</div><div class="card-action" onclick="showPage('inventory')">Manage →</div></div>
+        <div class="inv-list">
+          <div class="inv-item">
+            <div style="width:10px;height:10px;border-radius:50%;background:var(--amber);flex-shrink:0"></div>
+            <div class="inv-name">Limestone</div>
+            <div class="inv-bar-wrap"><div class="inv-bar-bg"><div class="inv-bar-fill" style="width:32%;background:var(--red)"></div></div></div>
+            <div class="inv-qty" style="color:var(--red)">3.2d</div>
+          </div>
+          <div class="inv-item">
+            <div style="width:10px;height:10px;border-radius:50%;background:var(--teal);flex-shrink:0"></div>
+            <div class="inv-name">Gypsum</div>
+            <div class="inv-bar-wrap"><div class="inv-bar-bg"><div class="inv-bar-fill" style="width:68%;background:var(--teal)"></div></div></div>
+            <div class="inv-qty" style="color:var(--teal)">8.4d</div>
+          </div>
+          <div class="inv-item">
+            <div style="width:10px;height:10px;border-radius:50%;background:var(--blue);flex-shrink:0"></div>
+            <div class="inv-name">Fly Ash</div>
+            <div class="inv-bar-wrap"><div class="inv-bar-bg"><div class="inv-bar-fill" style="width:82%;background:var(--blue)"></div></div></div>
+            <div class="inv-qty" style="color:var(--blue)">12.1d</div>
+          </div>
+          <div class="inv-item">
+            <div style="width:10px;height:10px;border-radius:50%;background:var(--green);flex-shrink:0"></div>
+            <div class="inv-name">Slag</div>
+            <div class="inv-bar-wrap"><div class="inv-bar-bg"><div class="inv-bar-fill" style="width:55%;background:var(--green)"></div></div></div>
+            <div class="inv-qty" style="color:var(--green)">7.8d</div>
+          </div>
+          <div class="inv-item">
+            <div style="width:10px;height:10px;border-radius:50%;background:var(--amber);flex-shrink:0"></div>
+            <div class="inv-name">Coal</div>
+            <div class="inv-bar-wrap"><div class="inv-bar-bg"><div class="inv-bar-fill" style="width:48%;background:var(--amber)"></div></div></div>
+            <div class="inv-qty" style="color:var(--amber)">6.2d</div>
+          </div>
+          <div class="inv-item">
+            <div style="width:10px;height:10px;border-radius:50%;background:var(--text3);flex-shrink:0"></div>
+            <div class="inv-name">Iron Ore</div>
+            <div class="inv-bar-wrap"><div class="inv-bar-bg"><div class="inv-bar-fill" style="width:90%;background:var(--green)"></div></div></div>
+            <div class="inv-qty" style="color:var(--green)">15.0d</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ PRODUCTION PAGE ══════ -->
+  <div class="content" id="page-production">
+    <div class="kpi-row">
+      <div class="kpi-card amber"><div class="kpi-label">Clinker Output</div><div class="kpi-value" style="color:var(--amber)">142 <span style="font-size:16px;color:var(--text2)">MT/hr</span></div><div class="kpi-sub"><span class="change up">▲ 4%</span> vs target</div></div>
+      <div class="kpi-card teal"><div class="kpi-label">Cement Milled</div><div class="kpi-value" style="color:var(--teal)">2,810 <span style="font-size:16px;color:var(--text2)">MT</span></div><div class="kpi-sub">Target: 3,200 MT</div></div>
+      <div class="kpi-card blue"><div class="kpi-label">Power Consumed</div><div class="kpi-value" style="color:var(--blue)">4.2 <span style="font-size:16px;color:var(--text2)">MW</span></div><div class="kpi-sub"><span class="change down">▼ 2.1%</span> efficiency up</div></div>
+      <div class="kpi-card coral"><div class="kpi-label">Cost per MT</div><div class="kpi-value" style="color:var(--coral)">₹1,840</div><div class="kpi-sub"><span class="change up">▲ On budget</span></div></div>
+    </div>
+
+    <div class="prod-grid">
+      <div class="machine-card">
+        <div class="machine-name">Rotary Kiln — RK1</div>
+        <div class="machine-status"><div class="dot"></div><span class="m-running" style="font-size:12px;font-weight:600">RUNNING</span><span style="font-size:11px;color:var(--text3);margin-left:8px">Since 06:00 AM · 8h 42m</span></div>
+        <div class="machine-metrics">
+          <div class="mm-item"><div class="mm-label">Temperature</div><div class="mm-value">1382<span class="mm-unit">°C</span></div></div>
+          <div class="mm-item"><div class="mm-label">Feed Rate</div><div class="mm-value">185<span class="mm-unit">TPH</span></div></div>
+          <div class="mm-item"><div class="mm-label">Speed</div><div class="mm-value">3.2<span class="mm-unit">RPM</span></div></div>
+        </div>
+        <div class="prog-bar" style="margin-top:12px"><div class="prog-fill" style="width:90%;background:var(--amber)"></div></div>
+        <div style="font-size:10px;color:var(--text3);margin-top:4px">Load: 90% · Thermal efficiency: 87%</div>
+      </div>
+
+      <div class="machine-card">
+        <div class="machine-name">Ball Mill — BM2</div>
+        <div class="machine-status"><div class="dot"></div><span class="m-running" style="font-size:12px;font-weight:600">RUNNING</span><span style="font-size:11px;color:var(--text3);margin-left:8px">Scheduled maint in 3 days</span></div>
+        <div class="machine-metrics">
+          <div class="mm-item"><div class="mm-label">Speed</div><div class="mm-value">342<span class="mm-unit">RPM</span></div></div>
+          <div class="mm-item"><div class="mm-label">Output</div><div class="mm-value">68<span class="mm-unit">TPH</span></div></div>
+          <div class="mm-item"><div class="mm-label">Fineness</div><div class="mm-value">3200<span class="mm-unit">cm²/g</span></div></div>
+        </div>
+        <div class="prog-bar" style="margin-top:12px"><div class="prog-fill" style="width:73%;background:var(--teal)"></div></div>
+        <div style="font-size:10px;color:var(--text3);margin-top:4px">Load: 73% · Vibration: Normal</div>
+      </div>
+
+      <div class="machine-card">
+        <div class="machine-name">Clinker Cooler — CC1</div>
+        <div class="machine-status"><div class="dot"></div><span class="m-running" style="font-size:12px;font-weight:600">RUNNING</span><span style="font-size:11px;color:var(--text3);margin-left:8px">Outlet temp normal</span></div>
+        <div class="machine-metrics">
+          <div class="mm-item"><div class="mm-label">Inlet Temp</div><div class="mm-value">1180<span class="mm-unit">°C</span></div></div>
+          <div class="mm-item"><div class="mm-label">Outlet Temp</div><div class="mm-value">98<span class="mm-unit">°C</span></div></div>
+          <div class="mm-item"><div class="mm-label">Air Flow</div><div class="mm-value">1120<span class="mm-unit">m³/h</span></div></div>
+        </div>
+        <div class="prog-bar" style="margin-top:12px"><div class="prog-fill" style="width:64%;background:var(--blue)"></div></div>
+        <div style="font-size:10px;color:var(--text3);margin-top:4px">Load: 64% · Heat recovery: 72%</div>
+      </div>
+
+      <div class="machine-card" style="border-color:rgba(245,166,35,.2)">
+        <div class="machine-name">Packer — PKR2</div>
+        <div class="machine-status"><div style="width:6px;height:6px;border-radius:50%;background:var(--amber)"></div><span class="m-idle" style="font-size:12px;font-weight:600">IDLE</span><span style="font-size:11px;color:var(--text3);margin-left:8px">Awaiting clinker transfer</span></div>
+        <div class="machine-metrics">
+          <div class="mm-item"><div class="mm-label">Bags Today</div><div class="mm-value">4,120<span class="mm-unit">bags</span></div></div>
+          <div class="mm-item"><div class="mm-label">Speed</div><div class="mm-value">—<span class="mm-unit">bpm</span></div></div>
+          <div class="mm-item"><div class="mm-label">Shifts Done</div><div class="mm-value">2<span class="mm-unit">/3</span></div></div>
+        </div>
+        <div class="prog-bar" style="margin-top:12px"><div class="prog-fill" style="width:0%;background:var(--amber)"></div></div>
+        <div style="font-size:10px;color:var(--amber);margin-top:4px">Awaiting operation — estimated start: 3:30 PM</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title">Shift Production Log</div><div class="date-chip">Today, 21 Mar 2026</div></div>
+      <div>
+        <div class="shift-row">
+          <div class="shift-tag shift-a">A Shift</div>
+          <div class="shift-info"><div class="shift-name">Shift A — Ranjit Gogoi (Supervisor)</div><div class="shift-time">06:00 AM – 02:00 PM</div></div>
+          <div style="flex:1"></div>
+          <div class="mm-item" style="text-align:right"><div class="mm-label">Clinker</div><div class="shift-count" style="color:var(--amber)">1,136 MT</div></div>
+          <div class="mm-item" style="text-align:right;margin-left:24px"><div class="mm-label">Cement</div><div class="shift-count" style="color:var(--teal)">980 MT</div></div>
+          <div class="status-pill s-delivered" style="margin-left:24px">Completed</div>
+        </div>
+        <div class="shift-row">
+          <div class="shift-tag shift-b">B Shift</div>
+          <div class="shift-info"><div class="shift-name">Shift B — Priya Das (Supervisor)</div><div class="shift-time">02:00 PM – 10:00 PM</div></div>
+          <div style="flex:1"></div>
+          <div class="mm-item" style="text-align:right"><div class="mm-label">Clinker</div><div class="shift-count" style="color:var(--amber)">842 MT</div></div>
+          <div class="mm-item" style="text-align:right;margin-left:24px"><div class="mm-label">Cement</div><div class="shift-count" style="color:var(--teal)">710 MT</div></div>
+          <div class="status-pill s-processing" style="margin-left:24px">In Progress</div>
+        </div>
+        <div class="shift-row">
+          <div class="shift-tag shift-c">C Shift</div>
+          <div class="shift-info"><div class="shift-name">Shift C — Mohammed Hussain (Supervisor)</div><div class="shift-time">10:00 PM – 06:00 AM</div></div>
+          <div style="flex:1"></div>
+          <div class="mm-item" style="text-align:right"><div class="mm-label">Clinker</div><div class="shift-count" style="color:var(--text3)">—</div></div>
+          <div class="mm-item" style="text-align:right;margin-left:24px"><div class="mm-label">Cement</div><div class="shift-count" style="color:var(--text3)">—</div></div>
+          <div class="status-pill s-pending" style="margin-left:24px">Upcoming</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ ORDERS PAGE ══════ -->
+  <div class="content" id="page-orders">
+    <div class="kpi-row" style="grid-template-columns:repeat(5,1fr)">
+      <div class="kpi-card amber"><div class="kpi-label">Pending</div><div class="kpi-value" style="color:var(--amber)">7</div></div>
+      <div class="kpi-card blue"><div class="kpi-label">Processing</div><div class="kpi-value" style="color:var(--blue)">14</div></div>
+      <div class="kpi-card teal"><div class="kpi-label">In Transit</div><div class="kpi-value" style="color:var(--teal)">11</div></div>
+      <div class="kpi-card green"><div class="kpi-label">Delivered</div><div class="kpi-value" style="color:var(--green)">15</div></div>
+      <div class="kpi-card coral"><div class="kpi-label">Total Value</div><div class="kpi-value" style="color:var(--coral)">₹1.8Cr</div></div>
+    </div>
+
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-head"><div class="card-title">Order Pipeline</div><div class="btn btn-amber" style="font-size:11px;padding:5px 12px">+ New Quote</div></div>
+      <div class="pipeline-stages">
+        <div class="pipeline-col">
+          <div class="pipeline-head">Lead In <span class="pipeline-count">3</span></div>
+          <div class="pipeline-card"><div class="pc-company">Megha Infra Ltd</div><div class="pc-grade">OPC-53 · ~180 MT</div><div class="pc-amount">₹9.4L <span>est.</span></div></div>
+          <div class="pipeline-card"><div class="pc-company">Dibru Constructions</div><div class="pc-grade">PPC · ~60 MT</div><div class="pc-amount">₹2.8L <span>est.</span></div></div>
+          <div class="pipeline-card"><div class="pc-company">North East Roads</div><div class="pc-grade">OPC-43 · ~500 MT</div><div class="pc-amount">₹23.5L <span>est.</span></div></div>
+        </div>
+        <div class="pipeline-col">
+          <div class="pipeline-head">Quote Sent <span class="pipeline-count">4</span></div>
+          <div class="pipeline-card" style="border-color:rgba(245,166,35,.3)"><div class="pc-company">Barpeta Housing</div><div class="pc-grade">OPC-53 · 240 MT</div><div class="pc-amount">₹12.5L</div></div>
+          <div class="pipeline-card"><div class="pc-company">Kamrup Bridge Proj.</div><div class="pc-grade">OPC-43 · 800 MT</div><div class="pc-amount">₹37.6L</div></div>
+          <div class="pipeline-card"><div class="pc-company">Tezpur Township</div><div class="pc-grade">PSC · 320 MT</div><div class="pc-amount">₹13.4L</div></div>
+        </div>
+        <div class="pipeline-col">
+          <div class="pipeline-head">Confirmed <span class="pipeline-count">5</span></div>
+          <div class="pipeline-card" style="border-color:rgba(29,184,163,.3)"><div class="pc-company">Assam PWD</div><div class="pc-grade">OPC-53 · 1200 MT</div><div class="pc-amount">₹62.4L</div></div>
+          <div class="pipeline-card" style="border-color:rgba(29,184,163,.3)"><div class="pc-company">IIT Guwahati Exp.</div><div class="pc-grade">OPC-53 · 450 MT</div><div class="pc-amount">₹23.4L</div></div>
+          <div class="pipeline-card"><div class="pc-company">Guwahati Metro</div><div class="pc-grade">PSC · 2000 MT</div><div class="pc-amount">₹84.0L</div></div>
+        </div>
+        <div class="pipeline-col">
+          <div class="pipeline-head">Dispatched <span class="pipeline-count">6</span></div>
+          <div class="pipeline-card"><div class="pc-company">NE Builders</div><div class="pc-grade">PPC · 80 MT</div><div class="pc-amount">₹3.8L</div></div>
+          <div class="pipeline-card"><div class="pc-company">Sharma Infra (P2)</div><div class="pc-grade">OPC-53 · 160 MT</div><div class="pc-amount">₹8.3L</div></div>
+        </div>
+        <div class="pipeline-col">
+          <div class="pipeline-head">Invoiced <span class="pipeline-count">15</span></div>
+          <div class="pipeline-card" style="border-color:rgba(39,174,96,.3)"><div class="pc-company">Sharma Infra</div><div class="pc-grade">OPC-53 · 120 MT</div><div class="pc-amount" style="color:var(--green)">₹6.2L</div></div>
+          <div class="pipeline-card" style="border-color:rgba(39,174,96,.3)"><div class="pc-company">Assam PWD (P1)</div><div class="pc-grade">OPC-53 · 350 MT</div><div class="pc-amount" style="color:var(--green)">₹18.2L</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ FLEET PAGE ══════ -->
+  <div class="content" id="page-fleet">
+    <div class="kpi-row">
+      <div class="kpi-card green"><div class="kpi-label">Trucks Active</div><div class="kpi-value" style="color:var(--green)">12</div><div class="kpi-sub">of 15 total</div></div>
+      <div class="kpi-card amber"><div class="kpi-label">Total km Today</div><div class="kpi-value" style="color:var(--amber)">2,841</div><div class="kpi-sub">km covered</div></div>
+      <div class="kpi-card teal"><div class="kpi-label">Deliveries Done</div><div class="kpi-value" style="color:var(--teal)">18</div><div class="kpi-sub">6 remaining</div></div>
+      <div class="kpi-card coral"><div class="kpi-label">Fuel Cost</div><div class="kpi-value" style="color:var(--coral)">₹42,800</div><div class="kpi-sub">Budget: ₹50,000</div></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-head"><div class="card-title">Live Fleet Map</div><div class="btn btn-ghost" style="font-size:10px;padding:4px 10px">Full Map →</div></div>
+        <div class="map-ph">
+          <div class="map-grid"></div>
+          <div class="truck-dot" style="top:40%;left:25%"></div>
+          <div class="truck-dot" style="top:30%;left:55%;background:var(--teal)"></div>
+          <div class="truck-dot" style="top:65%;left:40%;background:var(--blue)"></div>
+          <div class="truck-dot" style="top:50%;left:70%;background:var(--amber)"></div>
+          <div class="truck-dot" style="top:20%;left:80%;background:var(--coral)"></div>
+          <span class="map-label">Live GPS positions — 12 vehicles</span>
+        </div>
+        <div class="fleet-list">
+          <div class="fleet-item">
+            <div class="truck-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="var(--amber)"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4z"/></svg></div>
+            <div class="fleet-info">
+              <div class="fleet-num">AS-01-TC-4421</div>
+              <div class="fleet-route">Brahmaputra Plant → Guwahati City Depot</div>
+              <div class="prog-bar"><div class="prog-fill" style="width:72%;background:var(--amber)"></div></div>
+            </div>
+            <div class="fleet-stat"><div class="fleet-km" style="color:var(--amber)">142 km</div><div class="fleet-eta">ETA: 2:30 PM</div></div>
+          </div>
+          <div class="fleet-item">
+            <div class="truck-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="var(--teal)"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4z"/></svg></div>
+            <div class="fleet-info">
+              <div class="fleet-num">AS-01-TC-5530</div>
+              <div class="fleet-route">Tezpur Depot → Barpeta Site</div>
+              <div class="prog-bar"><div class="prog-fill" style="width:45%;background:var(--teal)"></div></div>
+            </div>
+            <div class="fleet-stat"><div class="fleet-km" style="color:var(--teal)">89 km</div><div class="fleet-eta">ETA: 4:15 PM</div></div>
+          </div>
+          <div class="fleet-item">
+            <div class="truck-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="var(--blue)"><path d="M20 8h-3V4H3c-1.1 0-2 .9-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4z"/></svg></div>
+            <div class="fleet-info">
+              <div class="fleet-num">AS-01-TC-6612</div>
+              <div class="fleet-route">Plant → Assam PWD Jorhat Site</div>
+              <div class="prog-bar"><div class="prog-fill" style="width:18%;background:var(--blue)"></div></div>
+            </div>
+            <div class="fleet-stat"><div class="fleet-km" style="color:var(--blue)">34 km</div><div class="fleet-eta">ETA: 6:00 PM</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><div class="card-title">Fleet Status Board</div></div>
+        <div style="padding:14px 16px">
+          <table class="order-table">
+            <thead><tr><th>Vehicle</th><th>Driver</th><th>Load</th><th>Status</th><th>Km</th></tr></thead>
+            <tbody>
+              <tr><td class="order-id">4421</td><td>R. Borah</td><td>120 MT</td><td><span class="status-pill s-transit">Moving</span></td><td>142</td></tr>
+              <tr><td class="order-id">5530</td><td>D. Saikia</td><td>80 MT</td><td><span class="status-pill s-transit">Moving</span></td><td>89</td></tr>
+              <tr><td class="order-id">6612</td><td>F. Islam</td><td>200 MT</td><td><span class="status-pill s-transit">Moving</span></td><td>34</td></tr>
+              <tr><td class="order-id">7701</td><td>G. Kalita</td><td>—</td><td><span class="status-pill s-processing">Loading</span></td><td>0</td></tr>
+              <tr><td class="order-id">8814</td><td>H. Das</td><td>50 MT</td><td><span class="status-pill s-delivered">Returned</span></td><td>218</td></tr>
+              <tr><td class="order-id">9920</td><td>J. Baruah</td><td>—</td><td><span class="status-pill s-pending">Standby</span></td><td>0</td></tr>
+              <tr style="background:rgba(231,76,60,.04)"><td class="order-id" style="color:var(--red)">3310</td><td>K. Ahmed</td><td>120 MT</td><td><span class="status-pill s-failed">Flag ⚠</span></td><td>156</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ INVENTORY PAGE ══════ -->
+  <div class="content" id="page-inventory">
+    <div class="kpi-row">
+      <div class="kpi-card amber"><div class="kpi-label">OPC-53 Bags</div><div class="kpi-value" style="color:var(--amber)">8,420</div><div class="kpi-sub">~420 MT</div></div>
+      <div class="kpi-card teal"><div class="kpi-label">PPC Bags</div><div class="kpi-value" style="color:var(--teal)">12,840</div><div class="kpi-sub">~642 MT</div></div>
+      <div class="kpi-card blue"><div class="kpi-label">OPC-43 Bags</div><div class="kpi-value" style="color:var(--blue)">5,200</div><div class="kpi-sub">~260 MT</div></div>
+      <div class="kpi-card coral"><div class="kpi-label">Raw Material Value</div><div class="kpi-value" style="color:var(--coral)">₹2.4Cr</div><div class="kpi-sub">In stock</div></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-head"><div class="card-title">Raw Materials</div><div class="btn btn-amber" style="font-size:11px;padding:5px 12px">+ Purchase Request</div></div>
+        <div class="chart-wrap"><canvas id="invChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">Finished Goods Stock</div></div>
+        <div class="chart-wrap"><canvas id="fgChart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title">Stock Detail & Reorder Status</div></div>
+      <table class="order-table" style="margin:0 0 14px">
+        <thead><tr><th>Material</th><th>Current Stock (MT)</th><th>Reorder Level</th><th>Days Remaining</th><th>Last Purchase</th><th>Vendor</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr style="background:rgba(231,76,60,.04)"><td>Limestone</td><td>3,840</td><td>6,000</td><td style="color:var(--red);font-weight:600">3.2 days</td><td>18 Mar</td><td>Meghalaya Quarries</td><td><span class="status-pill s-failed">Reorder Now</span></td></tr>
+          <tr><td>Gypsum</td><td>820</td><td>500</td><td style="color:var(--green)">8.4 days</td><td>15 Mar</td><td>Rajasthan Minerals</td><td><span class="status-pill s-delivered">OK</span></td></tr>
+          <tr><td>Fly Ash</td><td>4,100</td><td>2,000</td><td style="color:var(--green)">12.1 days</td><td>10 Mar</td><td>NTPC Bongaigaon</td><td><span class="status-pill s-delivered">OK</span></td></tr>
+          <tr><td>Coal</td><td>2,200</td><td>2,000</td><td style="color:var(--amber)">6.2 days</td><td>16 Mar</td><td>Coal India Ltd</td><td><span class="status-pill s-pending">Monitor</span></td></tr>
+          <tr><td>Iron Ore</td><td>1,800</td><td>600</td><td style="color:var(--green)">15.0 days</td><td>8 Mar</td><td>Odisha Mines Corp</td><td><span class="status-pill s-delivered">OK</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════ ATTENDANCE PAGE ══════ -->
+  <div class="content" id="page-attendance">
+    <div class="kpi-row">
+      <div class="kpi-card green"><div class="kpi-label">Present Today</div><div class="kpi-value" style="color:var(--green)">284</div><div class="kpi-sub">of 312 total</div></div>
+      <div class="kpi-card red" style="--red:#E74C3C"><div class="kpi-label">Absent</div><div class="kpi-value" style="color:var(--red)">18</div><div class="kpi-sub">5.7% absenteeism</div></div>
+      <div class="kpi-card amber"><div class="kpi-label">Late Arrivals</div><div class="kpi-value" style="color:var(--amber)">10</div><div class="kpi-sub">Avg delay: 22 min</div></div>
+      <div class="kpi-card teal"><div class="kpi-label">Labour Today</div><div class="kpi-value" style="color:var(--teal)">148</div><div class="kpi-sub">Contract workers</div></div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:14px">
+      <div class="card">
+        <div class="card-head"><div class="card-title">Attendance by Department</div></div>
+        <div class="chart-wrap"><canvas id="deptChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">Weekly Trend</div></div>
+        <div class="chart-wrap"><canvas id="weekChart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title">Today's Attendance — Recent Punches</div><div class="date-chip">21 Mar 2026</div></div>
+      <div class="att-grid" style="padding:14px 16px">
+        <div class="emp-card"><div class="emp-avatar" style="background:linear-gradient(135deg,#F5A623,#E85D24)">RG</div><div class="emp-info"><div class="emp-name">Ranjit Gogoi</div><div class="emp-dept">Production · Supervisor</div><div class="emp-time">IN 05:58 AM</div></div><div class="att-status"><div class="att-in">Present</div></div></div>
+        <div class="emp-card"><div class="emp-avatar" style="background:linear-gradient(135deg,#1DB8A3,#0F6E56)">PD</div><div class="emp-info"><div class="emp-name">Priya Das</div><div class="emp-dept">Production · Engineer</div><div class="emp-time">IN 01:58 PM</div></div><div class="att-status"><div class="att-in">Present</div></div></div>
+        <div class="emp-card"><div class="emp-avatar" style="background:linear-gradient(135deg,#3D8EF0,#185FA5)">MH</div><div class="emp-info"><div class="emp-name">Mohammed Hussain</div><div class="emp-dept">Production · Operator</div><div class="emp-time">IN 09:24 AM</div></div><div class="att-status"><div class="att-late">Late</div></div></div>
+        <div class="emp-card"><div class="emp-avatar" style="background:linear-gradient(135deg,#27AE60,#0C6E38)">AB</div><div class="emp-info"><div class="emp-name">Anita Borah</div><div class="emp-dept">HR · Manager</div><div class="emp-time">IN 09:02 AM</div></div><div class="att-status"><div class="att-in">Present</div></div></div>
+        <div class="emp-card" style="border-color:rgba(231,76,60,.2)"><div class="emp-avatar" style="background:#2C2C2A">KS</div><div class="emp-info"><div class="emp-name">Kamal Sharma</div><div class="emp-dept">Maintenance · Tech</div><div class="emp-time">Not punched in</div></div><div class="att-status"><div class="att-out">Absent</div></div></div>
+        <div class="emp-card"><div class="emp-avatar" style="background:linear-gradient(135deg,#D4537E,#4B1528)">SF</div><div class="emp-info"><div class="emp-name">Sunita Farooq</div><div class="emp-dept">Quality · Lab Tech</div><div class="emp-time">IN 08:55 AM</div></div><div class="att-status"><div class="att-in">Present</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════ SALES CRM PAGE ══════ -->
+  <div class="content" id="page-sales">
+    <div class="kpi-row">
+      <div class="kpi-card amber"><div class="kpi-label">Pipeline Value</div><div class="kpi-value" style="color:var(--amber)">₹4.2Cr</div><div class="kpi-sub">Active leads</div></div>
+      <div class="kpi-card coral"><div class="kpi-label">MTD Revenue</div><div class="kpi-value" style="color:var(--coral)">₹1.4Cr</div><div class="kpi-sub"><span class="change up">▲ 18%</span> vs last month</div></div>
+      <div class="kpi-card teal"><div class="kpi-label">Active Dealers</div><div class="kpi-value" style="color:var(--teal)">84</div><div class="kpi-sub">12 new this month</div></div>
+      <div class="kpi-card blue"><div class="kpi-label">Field Visits Today</div><div class="kpi-value" style="color:var(--blue)">23</div><div class="kpi-sub">of 28 planned</div></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-head"><div class="card-title">Revenue vs Target</div></div>
+        <div class="chart-wrap"><canvas id="revChart"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div class="card-title">Top Dealers — This Month</div></div>
+        <div>
+          <table class="order-table">
+            <thead><tr><th>Dealer</th><th>Location</th><th>Grade Mix</th><th>Volume MT</th><th>Revenue</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:600">Bora & Sons</td><td>Guwahati</td><td>OPC-53</td><td>820</td><td style="color:var(--green)">₹42.6L</td></tr>
+              <tr><td style="font-weight:600">NE Materials</td><td>Tezpur</td><td>PPC</td><td>640</td><td style="color:var(--green)">₹30.1L</td></tr>
+              <tr><td style="font-weight:600">Kalita Traders</td><td>Jorhat</td><td>OPC-43</td><td>520</td><td style="color:var(--green)">₹24.4L</td></tr>
+              <tr><td style="font-weight:600">Singh Agencies</td><td>Dibrugarh</td><td>Mixed</td><td>480</td><td style="color:var(--green)">₹22.6L</td></tr>
+              <tr><td style="font-weight:600">Ahmed & Co.</td><td>Silchar</td><td>PPC</td><td>390</td><td style="color:var(--amber)">₹18.3L</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><div class="card-title">Sales Rep Field Performance</div></div>
+      <table class="order-table" style="margin-bottom:14px">
+        <thead><tr><th>Sales Rep</th><th>Zone</th><th>Planned Visits</th><th>Actual Visits</th><th>km Covered</th><th>Orders Closed</th><th>Revenue</th><th>Beat Compliance</th></tr></thead>
+        <tbody>
+          <tr><td style="font-weight:600">Dipak Nath</td><td>Guwahati North</td><td>8</td><td>8</td><td>62 km</td><td>4</td><td>₹18.4L</td><td><span class="status-pill s-delivered">100%</span></td></tr>
+          <tr><td style="font-weight:600">Ritu Sharma</td><td>Guwahati South</td><td>6</td><td>5</td><td>48 km</td><td>3</td><td>₹12.1L</td><td><span class="status-pill s-processing">83%</span></td></tr>
+          <tr><td style="font-weight:600">Asif Khan</td><td>Kamrup Rural</td><td>10</td><td>6</td><td>94 km</td><td>2</td><td>₹8.4L</td><td><span class="status-pill s-failed">60%</span></td></tr>
+          <tr><td style="font-weight:600">Meena Deka</td><td>Barpeta</td><td>7</td><td>7</td><td>77 km</td><td>5</td><td>₹22.1L</td><td><span class="status-pill s-delivered">100%</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- end main -->
+</div><!-- end app -->
+
+<script>
+// ─── NAVIGATION ───
+function showPage(name) {
+  document.querySelectorAll('.content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  const pg = document.getElementById('page-' + name);
+  if (pg) pg.classList.add('active');
+
+  const titles = {
+    dashboard: 'Command Centre',
+    production: 'Live Production',
+    orders: 'Order Management',
+    fleet: 'Fleet & Logistics',
+    inventory: 'Inventory',
+    attendance: 'Attendance & Labour',
+    sales: 'Sales CRM'
+  };
+  document.getElementById('pageTitle').textContent = titles[name] || name;
+
+  const navMap = {
+    dashboard: 0, production: 1, orders: 2, fleet: 3, inventory: 4, attendance: 5, sales: 6
+  };
+  const items = document.querySelectorAll('.nav-item');
+  const idx = navMap[name];
+  if (idx !== undefined && items[idx]) items[idx].classList.add('active');
+
+  if (name === 'inventory' && !window._invChartDone) { buildInvCharts(); window._invChartDone = true; }
+  if (name === 'attendance' && !window._attChartDone) { buildAttCharts(); window._attChartDone = true; }
+  if (name === 'sales' && !window._salesChartDone) { buildSalesCharts(); window._salesChartDone = true; }
+}
+
+// ─── CLOCK ───
+function updateClock() {
+  const now = new Date();
+  const d = now.toLocaleDateString('en-IN', {day:'2-digit',month:'short',year:'numeric'});
+  const t = now.toLocaleTimeString('en-IN', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  document.getElementById('liveClock').textContent = d + ' · ' + t;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ─── CHART DEFAULTS ───
+Chart.defaults.color = '#9E9C96';
+Chart.defaults.font.family = "'IBM Plex Sans', sans-serif";
+Chart.defaults.font.size = 11;
+
+// ─── PRODUCTION CHART ───
+new Chart(document.getElementById('prodChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+    datasets: [
+      {label:'OPC-53', data:[1240,1380,1190,1420,1310,1480,980], backgroundColor:'rgba(245,166,35,0.75)', borderRadius:4, borderSkipped:false},
+      {label:'PPC', data:[820,760,900,840,780,860,620], backgroundColor:'rgba(29,184,163,0.65)', borderRadius:4, borderSkipped:false},
+      {label:'OPC-43', data:[420,380,440,410,460,400,280], backgroundColor:'rgba(61,142,240,0.6)', borderRadius:4, borderSkipped:false}
+    ]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:true, aspectRatio:2.2,
+    plugins:{legend:{labels:{color:'#9E9C96',boxWidth:10,padding:12}}},
+    scales:{
+      x:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#5C5A56'}},
+      y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#5C5A56'},stacked:false}
+    }
+  }
+});
+
+// ─── INVENTORY CHARTS ───
+function buildInvCharts() {
+  new Chart(document.getElementById('invChart'), {
+    type:'bar',
+    data:{
+      labels:['Limestone','Gypsum','Fly Ash','Coal','Iron Ore','Slag'],
+      datasets:[{
+        label:'Days of Stock',
+        data:[3.2,8.4,12.1,6.2,15.0,7.8],
+        backgroundColor:['rgba(231,76,60,0.7)','rgba(29,184,163,0.7)','rgba(61,142,240,0.7)','rgba(245,166,35,0.7)','rgba(39,174,96,0.7)','rgba(29,184,163,0.6)'],
+        borderRadius:4,borderSkipped:false
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:true,aspectRatio:1.8,
+      plugins:{legend:{display:false}},
+      scales:{x:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#5C5A56'}},y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#5C5A56'}}}
+    }
+  });
+  new Chart(document.getElementById('fgChart'), {
+    type:'doughnut',
+    data:{
+      labels:['OPC-53','PPC','OPC-43','PSC'],
+      datasets:[{data:[8420,12840,5200,3100],backgroundColor:['rgba(245,166,35,0.8)','rgba(29,184,163,0.8)','rgba(61,142,240,0.8)','rgba(232,93,36,0.8)'],borderWidth:0,hoverOffset:6}]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:true,aspectRatio:1.8,
+      plugins:{legend:{labels:{color:'#9E9C96',boxWidth:10,padding:12}}}
+    }
+  });
+}
+
+// ─── ATTENDANCE CHARTS ───
+function buildAttCharts() {
+  new Chart(document.getElementById('deptChart'), {
+    type:'bar',
+    data:{
+      labels:['Production','Maintenance','Quality','Logistics','HR','Security'],
+      datasets:[
+        {label:'Present',data:[98,42,18,34,12,28],backgroundColor:'rgba(39,174,96,0.7)',borderRadius:3,borderSkipped:false},
+        {label:'Absent',data:[4,3,1,2,1,0],backgroundColor:'rgba(231,76,60,0.6)',borderRadius:3,borderSkipped:false}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:true,aspectRatio:1.9,
+      plugins:{legend:{labels:{color:'#9E9C96',boxWidth:10,padding:10}}},
+      scales:{x:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#5C5A56'},stacked:true},y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#5C5A56'},stacked:true}}
+    }
+  });
+  new Chart(document.getElementById('weekChart'), {
+    type:'line',
+    data:{
+      labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+      datasets:[{
+        label:'Present',data:[288,291,280,294,285,268,284],
+        borderColor:'var(--amber)',backgroundColor:'rgba(245,166,35,0.1)',
+        fill:true,tension:.4,pointBackgroundColor:'var(--amber)',pointRadius:4
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:true,aspectRatio:1.9,
+      plugins:{legend:{display:false}},
+      scales:{x:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#5C5A56'}},y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#5C5A56'},min:250,max:312}}
+    }
+  });
+}
+
+// ─── SALES CHARTS ───
+function buildSalesCharts() {
+  new Chart(document.getElementById('revChart'), {
+    type:'line',
+    data:{
+      labels:['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+      datasets:[
+        {label:'Actual',data:[82,91,140,null,null,null,null,null,null,null,null,null],borderColor:'rgba(245,166,35,0.9)',backgroundColor:'rgba(245,166,35,0.1)',fill:true,tension:.4,pointBackgroundColor:'rgba(245,166,35,0.9)',pointRadius:4},
+        {label:'Target',data:[85,90,120,130,140,145,150,148,155,160,158,165],borderColor:'rgba(255,255,255,0.15)',borderDash:[6,4],pointRadius:0,tension:.4,fill:false}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:true,aspectRatio:2.2,
+      plugins:{legend:{labels:{color:'#9E9C96',boxWidth:10,padding:10}}},
+      scales:{x:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#5C5A56'}},y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'#5C5A56',callback:v=>'₹'+v+'L'}}}
+    }
+  });
+}
+</script>
+</body>
+</html> -->
