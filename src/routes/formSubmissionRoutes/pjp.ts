@@ -20,6 +20,7 @@ const numOrZero = z.preprocess((val) => {
 }, z.number().int().default(0));
 // ---------- input schemas ----------
 const pjpInputSchema = z.object({
+  id: z.string().optional(),
   userId: z.coerce.number().int().positive(),
   createdById: z.coerce.number().int().positive(),
   dealerId: strOrNull,
@@ -88,7 +89,7 @@ export default function setupPermanentJourneyPlansPostRoutes(app: Express) {
       const [record] = await db
         .insert(permanentJourneyPlans)
         .values({
-          id: randomUUID(),
+          id: input.id||randomUUID(),
           userId: input.userId,
           createdById: input.createdById,
           dealerId: input.dealerId ?? null,
