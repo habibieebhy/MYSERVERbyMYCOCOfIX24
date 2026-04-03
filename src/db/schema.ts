@@ -1,7 +1,7 @@
 // server/src/db/schema.ts
 import {
   pgTable, serial, integer, varchar, text, boolean, timestamp, date, numeric,
-  uniqueIndex, index, foreignKey, jsonb, uuid, primaryKey, unique, doublePrecision, real,
+  uniqueIndex, index, jsonb, uuid, primaryKey, unique, doublePrecision, real,
   bigserial, bigint
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
@@ -35,79 +35,49 @@ export const authSessions = pgTable("auth_sessions", {
 
 /* ========================= users ========================= */
 export const users = pgTable("users", {
-  id: serial().primaryKey().notNull(),
-  workosUserId: text("workos_user_id"),
-  companyId: integer("company_id").notNull(),
-  email: text().notNull(),
-  firstName: text("first_name"),
-  lastName: text("last_name"),
-  role: text().notNull(),
-  createdAt: timestamp("created_at", { precision: 6, withTimezone: true, mode: 'string' }).default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: timestamp("updated_at", { precision: 6, withTimezone: true, mode: 'string' }).default(sql`CURRENT_TIMESTAMP`),
+  id: serial("id").primaryKey(),
+  workosUserId: varchar("workos_user_id", { length: 255 }).unique(),
+  companyId: integer("company_id")
+    .notNull()
+    .references(() => companies.id, { onDelete: "no action", onUpdate: "no action" }),
+  email: varchar("email", { length: 255 }).notNull(),
+  firstName: varchar("first_name", { length: 255 }),
+  lastName: varchar("last_name", { length: 255 }),
+  role: varchar("role", { length: 255 }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true, precision: 6 }).defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true, precision: 6 }).defaultNow(),
   phoneNumber: varchar("phone_number", { length: 50 }),
-  inviteToken: text(),
-  status: text().default('active').notNull(),
+  inviteToken: varchar("inviteToken", { length: 255 }).unique(),
+  status: varchar("status", { length: 50 }).notNull().default("active"),
+  region: varchar("region", { length: 255 }),
+  area: varchar("area", { length: 255 }),
 
-  isDashboardUser: boolean("is_dashboard_user").default(false).notNull(),
-  dashboardLoginId: text("dashboard_login_id"),
-  dashboardHashedPassword: text("dashboard_hashed_password"),
-
-  isSalesAppUser: boolean("is_sales_app_user").default(false).notNull(),
-  salesmanLoginId: text("salesman_login_id"),
+  // Salesman app login fields
+  salesmanLoginId: varchar("salesman_login_id", { length: 255 }).unique(),
   hashedPassword: text("hashed_password"),
 
-  isTechnicalRole: boolean("is_technical_role").default(false).notNull(),
-  techLoginId: text("tech_login_id"),
-  techHashPassword: text("tech_hash_password"),
+  // --- TECHNICAL ROLE ---
+  isTechnicalRole: boolean("is_technical_role").default(false),
+  techLoginId: varchar("tech_login_id", { length: 255 }).unique(),
+  techHashedPassword: text("tech_hash_password"),
 
+  // --- ADMIN APP FIELDS ---
   isAdminAppUser: boolean("is_admin_app_user").default(false).notNull(),
-  adminAppLoginId: text("admin_app_login_id"),
+  adminAppLoginId: varchar("admin_app_login_id", { length: 255 }).unique(),
   adminAppHashedPassword: text("admin_app_hashed_password"),
 
-  reportsToId: integer("reports_to_id"),
-  area: text(),
-  region: text(),
-  noOfPjp: integer("no_of_pjp"),
-  deviceId: varchar("device_id", { length: 255 }),
+  deviceId: varchar("device_id", { length: 255 }).unique(),
   fcmToken: varchar("fcm_token", { length: 500 }),
 
-}, (table) => [
-  index("idx_user_company_id").using("btree", table.companyId.asc().nullsLast().op("int4_ops")),
-  index("idx_user_device_id").using("btree", table.deviceId.asc().nullsLast().op("text_ops")),
-  index("idx_workos_user_id").using("btree", table.workosUserId.asc().nullsLast().op("text_ops")),
-  uniqueIndex("users_company_id_email_key").using("btree", table.companyId.asc().nullsLast().op("int4_ops"), table.email.asc().nullsLast().op("text_ops")),
-  uniqueIndex("users_inviteToken_key").using("btree", table.inviteToken.asc().nullsLast().op("text_ops")),
-  uniqueIndex("users_salesman_login_id_key").using("btree", table.salesmanLoginId.asc().nullsLast().op("text_ops")),
-  uniqueIndex("users_workos_user_id_key").using("btree", table.workosUserId.asc().nullsLast().op("text_ops")),
-  foreignKey({
-    columns: [table.companyId],
-    foreignColumns: [companies.id],
-    name: "users_company_id_fkey"
-  }),
-  foreignKey({
-    columns: [table.reportsToId],
-    foreignColumns: [table.id],
-    name: "users_reports_to_id_fkey"
-  }).onUpdate("cascade").onDelete("set null"),
-  unique("uniq_user_device_id").on(table.deviceId),
-  index("idx_users_reports_to_id").on(table.reportsToId),
-]);
-
-export const roles = pgTable("roles", {
-  id: serial("id").primaryKey(),
-  orgRole: varchar("org_role", { length: 100 }), // e.g., 'President', 'General Manager', 'Executive'
-  jobRole: varchar("job_role", { length: 100 }), // e.g., 'Sales', 'Technical Sales', 'IT', 'MIS'
-  grantedPerms: text("granted_perms").array().notNull().default(sql`ARRAY[]::text[]`),
-  permDescription: varchar("perm_description", { length: 255 }),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-});
-
-export const userRoles = pgTable("user_roles", {
-  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  roleId: integer("role_id").notNull().references(() => roles.id, { onDelete: "cascade" }),
+  reportsToId: integer("reports_to_id").references((): any => users.id, { onDelete: "set null" }),
+  // --- ADDED FOR PRISMA PARITY ---
+  noOfPJP: integer("no_of_pjp"),
 }, (t) => [
-  primaryKey({ columns: [t.userId, t.roleId] }),
+  uniqueIndex("users_companyid_email_unique").on(t.companyId, t.email),
+  index("idx_user_company_id").on(t.companyId),
+  index("idx_workos_user_id").on(t.workosUserId),
+  index("idx_user_device_id").on(t.deviceId),
+  index("idx_users_reports_to_id").on(t.reportsToId),
 ]);
 
 /* ========================= notifications ========================= */
@@ -634,10 +604,6 @@ export const journeys = pgTable("journeys", {
   siteName: varchar("site_name", { length: 255 }),
   destLat: numeric("dest_lat", { precision: 10, scale: 7 }),
   destLng: numeric("dest_lng", { precision: 10, scale: 7 }),
-
-  // 🚀 NEW: The backend backpack for the Red Line
-  plannedRouteJson: jsonb("planned_route_json"),
-
   status: varchar("status", { length: 50 }).default('ACTIVE').notNull(),
   isActive: boolean("is_active").default(true),
   startTime: timestamp("start_time", { withTimezone: true, precision: 6 }).defaultNow().notNull(),
@@ -1265,7 +1231,7 @@ export const logisticsUsers = pgTable("logistics_users", {
   userName: varchar("user_name", { length: 255 }).unique().notNull(),
   userPassword: varchar("user_password", { length: 255 }).notNull(),
   userRole: varchar("user_role", { length: 255 }).notNull(), // 'GATE', 'WB', 'STORE', 'ADMIN' etc.
-
+  
   createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
   updatedAt: timestamp("updatedAt", { mode: "date" })
     .defaultNow()
@@ -1319,8 +1285,6 @@ export const logisticsIO = pgTable("logistics_io", {
 /* ========================= drizzle-zod insert schemas ========================= */
 export const insertCompanySchema = createInsertSchema(companies);
 export const insertUserSchema = createInsertSchema(users);
-export const insertUserRoles = createInsertSchema(userRoles);
-export const insertRoles = createInsertSchema(roles);
 export const insertDailyVisitReportSchema = createInsertSchema(dailyVisitReports);
 export const insertTechnicalVisitReportSchema = createInsertSchema(technicalVisitReports);
 export const insertPermanentJourneyPlanSchema = createInsertSchema(permanentJourneyPlans);
