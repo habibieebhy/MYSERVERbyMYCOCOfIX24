@@ -4,6 +4,7 @@ import { db } from '../../db/db';
 import { permanentJourneyPlans } from '../../db/schema';
 import { z } from 'zod';
 import { randomUUID } from 'crypto';
+import { eq } from 'drizzle-orm'; // 👈 ADD THIS AT THE TOP
 
 // helpers
 const toDateOnly = (d: Date) => d.toISOString().slice(0, 10);
@@ -82,14 +83,36 @@ const bulkSchema = z.object({
 
 export default function setupPermanentJourneyPlansPostRoutes(app: Express) {
   // SINGLE CREATE
+  // SINGLE CREATE
   app.post('/api/pjp', async (req: Request, res: Response) => {
     try {
       const input = pjpInputSchema.parse(req.body);
 
+      // 🛡️ 1. THE IDEMPOTENCY SHIELD (The Fix!)
+      // If Flutter sent us an ID, check if we already have it.
+      if (input.id) {
+        const existing = await db
+          .select()
+          .from(permanentJourneyPlans)
+          .where(eq(permanentJourneyPlans.id, input.id))
+          .limit(1);
+
+        if (existing.length > 0) {
+          console.log(`🛡️ Idempotency hit! PJP ${input.id} already exists. Returning existing record.`);
+          // Return a 200 OK with the existing data. DO NOT insert again!
+          return res.status(200).json({
+            success: true,
+            message: 'Already exists (Idempotency check passed)',
+            data: existing[0],
+          });
+        }
+      }
+
+      // 🚀 2. IF NOT EXISTS, PROCEED WITH NORMAL INSERT
       const [record] = await db
         .insert(permanentJourneyPlans)
         .values({
-          id: input.id||randomUUID(),
+          id: input.id || randomUUID(), // Uses Flutter's ID if provided
           userId: input.userId,
           createdById: input.createdById,
           dealerId: input.dealerId ?? null,
@@ -105,12 +128,10 @@ export default function setupPermanentJourneyPlansPostRoutes(app: Express) {
           plannedNewDealerVisits: input.plannedNewDealerVisits,
           plannedInfluencerVisits: input.plannedInfluencerVisits,
 
-          // Influencer Data
           influencerName: input.influencerName,
           influencerPhone: input.influencerPhone,
           activityType: input.activityType,
 
-          // Conversion
           noOfConvertedBags: input.noOfConvertedBags,
           noOfMasonPcSchemes: input.noOfMasonPcSchemes,
 
@@ -119,8 +140,6 @@ export default function setupPermanentJourneyPlansPostRoutes(app: Express) {
           idempotencyKey: input.idempotencyKey,
         })
         .onConflictDoNothing({
-          // Note: This target only protects USER + DEALER + DATE.
-          // It does NOT protect USER + SITE + DATE currently unless you add a unique index for that.
           target: [
             permanentJourneyPlans.userId,
             permanentJourneyPlans.dealerId,
@@ -144,10 +163,39 @@ export default function setupPermanentJourneyPlansPostRoutes(app: Express) {
   });
 
   // BULK CREATE
+  // BULK CREATE
   app.post('/api/bulkpjp', async (req: Request, res: Response) => {
     try {
       const input = bulkSchema.parse(req.body);
 
+      // 🛡️ 1. THE BULK IDEMPOTENCY SHIELD
+      // Check if this exact bulk operation lag-spiked and was sent twice.
+      if (input.idempotencyKey || input.bulkOpId) {
+        // We check whichever key the mobile app provided
+        const existing = await db
+          .select({ id: permanentJourneyPlans.id })
+          .from(permanentJourneyPlans)
+          .where(
+            input.idempotencyKey
+              ? eq(permanentJourneyPlans.idempotencyKey, input.idempotencyKey)
+              : eq(permanentJourneyPlans.bulkOpId, input.bulkOpId!)
+          )
+          .limit(1);
+
+        if (existing.length > 0) {
+          console.log(`🛡️ Bulk Idempotency hit! Batch already processed. Ignoring duplicate.`);
+          const requested = (input.dealerIds?.length || 0) + (input.siteIds?.length || 0);
+          return res.status(200).json({
+            success: true,
+            message: 'Bulk PJP creation already processed (Idempotency check passed)',
+            requestedCount: requested,
+            totalRowsCreated: 0,
+            totalRowsSkipped: requested,
+          });
+        }
+      }
+
+      // 🚀 2. IF NOT EXISTS, PROCEED WITH BULK GENERATION
       const {
         userId, createdById, dealerIds, siteIds, baseDate, batchSizePerDay,
         areaToBeVisited, route, description, status,
@@ -169,7 +217,7 @@ export default function setupPermanentJourneyPlansPostRoutes(app: Express) {
         const dayOffset = Math.floor(i / batchSizePerDay);
         const planDate = toDateOnly(addDays(baseDate, dayOffset));
         return {
-          id: randomUUID(),
+          id: randomUUID(), // Server safely generates IDs because we already checked idempotency!
           userId,
           createdById,
           dealerId: isDealerBatch ? id : null,
@@ -206,6 +254,7 @@ export default function setupPermanentJourneyPlansPostRoutes(app: Express) {
           .insert(permanentJourneyPlans)
           .values(rows.slice(i, i + CHUNK))
           .onConflictDoNothing({
+            // Protects against overlapping dates for the same dealer
             target: [
               permanentJourneyPlans.userId,
               permanentJourneyPlans.dealerId,
