@@ -20,6 +20,7 @@ export default defineConfig({
     // This securely reads your database connection string
     url: process.env.DATABASE_URL,
   },
+  schemaFilter:["bestcement"],
   verbose: true,
   strict: true,
 });

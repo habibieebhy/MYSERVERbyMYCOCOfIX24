@@ -4,47 +4,59 @@ import { Request, Response, Express } from 'express';
 import { db } from '../../db/db';
 import { dailyTasks, insertDailyTaskSchema } from '../../db/schema';
 import { z } from 'zod';
-import { randomUUID } from 'crypto'; // 🚀 ADDED THIS IMPORT
+import { randomUUID } from 'crypto';
 
-function createAutoCRUD(app: Express, config: {
-  endpoint: string,
-  table: any,
-  schema: z.ZodSchema,
-  tableName: string,
-  autoFields?: { [key: string]: () => any }
-}) {
-  const { endpoint, table, schema, tableName, autoFields = {} } = config;
-
-  // CREATE NEW RECORD
-  app.post(`/api/${endpoint}`, async (req: Request, res: Response) => {
+export default function setupDailyTasksPostRoutes(app: Express) {
+  app.post('/api/daily-tasks', async (req: Request, res: Response) => {
     try {
-      // Execute autoFields functions
-      const executedAutoFields: any = {};
-      for (const [key, fn] of Object.entries(autoFields)) {
-        executedAutoFields[key] = fn();
-      }
+      const body = req.body;
 
-      // Validate the payload
-      const parsed = schema.parse(req.body);
-
-      // Prepare data for insertion
-      const insertData = {
-        ...parsed,
-        ...executedAutoFields,
-        // 🚀 THE FIX: Safely extract the ID from Flutter, or generate a fresh one.
-        // This guarantees Drizzle NEVER attempts to insert a literal 'null'
-        id: req.body.id || parsed.id || randomUUID(),
+      // 🚀 1. THE BULLETPROOF PAYLOAD MAPPER
+      // We explicitly build the object with ONLY the columns that exist in Postgres.
+      // This completely strips out 'latitude' and 'longitude' so Postgres doesn't crash.
+      const cleanInsertData = {
+        id: body.id || randomUUID(),
+        pjpBatchId: body.pjpBatchId || null,
+        userId: Number(body.userId), // Safely enforce integer
+        dealerId: body.dealerId || null,
+        dealerNameSnapshot: body.dealerNameSnapshot || null,
+        dealerMobile: body.dealerMobile || null,
+        zone: body.zone || null,
+        area: body.area || null,
+        route: body.route || null,
+        objective: body.objective || null,
+        visitType: body.visitType || null,
+        requiredVisitCount: Number(body.requiredVisitCount) || 1,
+        week: body.week || null,
+        
+        // Drizzle 'date' type safely accepts the "YYYY-MM-DD" string
+        taskDate: body.taskDate, 
+        
+        status: body.status || 'Assigned',
+        
+        // Drizzle 'timestamp' type strictly requires Native JS Date objects!
+        createdAt: body.createdAt ? new Date(body.createdAt) : new Date(),
+        updatedAt: body.updatedAt ? new Date(body.updatedAt) : new Date(),
       };
 
-      const [newRecord] : any = await db.insert(table).values(insertData).returning();
+      // 🚀 2. VALIDATE THE CLEAN DATA
+      // This ensures everything perfectly matches your insertDailyTaskSchema
+      const validatedData = insertDailyTaskSchema.parse(cleanInsertData);
+
+      // 🚀 3. INSERT INTO POSTGRES
+      const [newRecord] : any = await db.insert(dailyTasks)
+        .values(validatedData)
+        .returning();
 
       res.status(201).json({
         success: true,
-        message: `${tableName} created successfully`,
+        message: 'Daily Task created successfully',
         data: newRecord
       });
+      
     } catch (error: any) {
-      console.error(`Create ${tableName} error:`, error);
+      console.error('Create Daily Task error:', error);
+      
       if (error instanceof z.ZodError) {
         return res.status(400).json({
           success: false,
@@ -56,22 +68,14 @@ function createAutoCRUD(app: Express, config: {
           }))
         });
       }
+      
       res.status(500).json({
         success: false,
-        error: `Failed to create ${tableName}`,
-        details: error instanceof Error ? error.message : 'Unknown error'
+        error: 'Failed to create Daily Task',
+        // If it ever fails again, this will tell you EXACTLY why Postgres rejected it
+        details: error instanceof Error ? error.message : String(error)
       });
     }
-  });
-}
-
-export default function setupDailyTasksPostRoutes(app: Express) {
-  createAutoCRUD(app, {
-    endpoint: 'daily-tasks',
-    table: dailyTasks,
-    schema: insertDailyTaskSchema,
-    tableName: 'Daily Task',
-    autoFields: {}
   });
   
   console.log('✅ Daily Tasks POST endpoints setup complete');
