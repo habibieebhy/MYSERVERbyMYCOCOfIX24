@@ -84,7 +84,7 @@ export default function setupAuthRoutes(app: Express) {
           // Tech Credentials
           isTechnicalRole: users.isTechnicalRole,
           techLoginId: users.techLoginId,
-          techHashedPassword: users.techHashedPassword,
+          techHashPassword: users.techHashPassword,
 
           // Admin App Credentials 
           isAdminAppUser: users.isAdminAppUser,
@@ -132,7 +132,7 @@ export default function setupAuthRoutes(app: Express) {
       else if (
         row.isTechnicalRole && 
         row.techLoginId === loginId && 
-        row.techHashedPassword === password
+        row.techHashPassword === password
       ) {
         isAuthenticated = true;
       }
@@ -204,7 +204,7 @@ export default function setupAuthRoutes(app: Express) {
           salesmanLoginId: users.salesmanLoginId,
           status: users.status,
           reportsToId: users.reportsToId,
-          noOfPJP: users.noOfPJP,
+          noOfPJP: users.noOfPjp,
           isTechnicalRole: users.isTechnicalRole,
           techLoginId: users.techLoginId,
           isAdminAppUser: users.isAdminAppUser,
