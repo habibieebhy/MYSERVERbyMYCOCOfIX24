@@ -6,11 +6,13 @@ import { db } from '../../db/db';
 import { salesmanAttendance } from '../../db/schema';
 import { eq, and } from 'drizzle-orm';
 import { z } from 'zod';
+import { randomUUID } from 'crypto'; // 👈 ADDED THIS IMPORT
 
 // Zod schema for validation
 const attendanceInSchema = z.object({
+  id: z.string().optional(), // 👈 FIX 1: Allow the ID from Flutter!
   userId: z.number(),
-  attendanceDate: z.string().date().or(z.string()), // accept Date or ISO string
+  attendanceDate: z.string().date().or(z.string()), 
   locationName: z.string().min(1),
   inTimeImageCaptured: z.boolean().optional(),
   inTimeImageUrl: z.string().optional().nullable(),
@@ -31,6 +33,7 @@ export default function setupAttendanceInPostRoutes(app: Express) {
       const parsed = attendanceInSchema.parse(req.body);
 
       const {
+        id, // 👈 Extract the ID
         userId,
         attendanceDate,
         locationName,
@@ -70,11 +73,12 @@ export default function setupAttendanceInPostRoutes(app: Express) {
       }
 
       const attendanceData = {
+        id: id || randomUUID(),
         userId,
-        attendanceDate: dateStr, // Pass string for date column
+        attendanceDate: dateStr, 
         role,
         locationName,
-        inTimeTimestamp: new Date(),
+        inTimeTimestamp: new Date().toISOString(), 
         outTimeTimestamp: null,
         inTimeImageCaptured: inTimeImageCaptured ?? false,
         outTimeImageCaptured: false,
@@ -92,8 +96,8 @@ export default function setupAttendanceInPostRoutes(app: Express) {
         outTimeSpeed: null,
         outTimeHeading: null,
         outTimeAltitude: null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       };
 
       const [newAttendance] = await db
